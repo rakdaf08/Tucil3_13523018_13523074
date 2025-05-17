@@ -1,6 +1,6 @@
 package components;
 
-class Piece {
+public class Piece {
   protected int x;
   protected int y;
   protected int size;
