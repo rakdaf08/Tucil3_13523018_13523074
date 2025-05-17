@@ -56,8 +56,14 @@ public class State implements Comparable<State> {
     for (int i = 0; i < board.getRows(); i++) {
       for (int j = 0; j < board.getCols(); j++) {
         if (board.getCell(i, j) == 'P') {
-          if (j + 1 == board.getCols()) {
-            return true;
+          Piece piece = board.getPieces().get("P");
+          char orientation = piece.orientation;
+          if (orientation == 'H') {
+            // if ()
+          }
+
+          if (orientation == 'V') {
+
           }
         }
       }

@@ -1,6 +1,6 @@
 package components;
 
-class Piece {
+public class Piece {
   protected int x;
   protected int y;
   protected int size;
@@ -58,5 +58,57 @@ class Piece {
       }
     }
     return size;
+  }
+
+  public int getX() {
+    return x;
+  }
+
+  public void setX(int x) {
+    this.x = x;
+  }
+
+  public int getY() {
+    return y;
+  }
+
+  public void setY(int y) {
+    this.y = y;
+  }
+
+  public int getSize() {
+    return size;
+  }
+
+  public void setSize(int size) {
+    this.size = size;
+  }
+
+  public int getTotalPiece() {
+    return totalPiece;
+  }
+
+  public void setTotalPiece(int totalPiece) {
+    this.totalPiece = totalPiece;
+  }
+
+  public char getOrientation() {
+    return orientation;
+  }
+
+  public void setOrientation(char orientation) {
+    this.orientation = orientation;
+  }
+
+  public boolean isPrimary() {
+    return isPrimary;
+  }
+
+  public void setPrimary(boolean isPrimary) {
+    this.isPrimary = isPrimary;
+  }
+
+  public static char getPrimaryPiece() {
+    return PRIMARY_PIECE;
   }
 }
