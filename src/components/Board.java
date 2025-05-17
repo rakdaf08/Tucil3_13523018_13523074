@@ -8,6 +8,8 @@ public class Board {
   private int rows;
   private HashMap<String, Piece> pieces;
 
+  public static final char EMPTY_GRID = '.';
+  
   public Board(char[][] grid) {
     this.grid = grid;
     this.cols = grid[0].length;
