@@ -25,12 +25,14 @@ public class State implements Comparable<State> {
     return Integer.compare(this.getF(), other.getF());
   }
 
+  @Override
   public boolean equals(Object o) {
     if (!(o instanceof State))
       return false;
     return board.equals(((State) o).board);
   }
 
+  @Override
   public int hashCode() {
     return board.hashCode();
   }
@@ -44,6 +46,34 @@ public class State implements Comparable<State> {
     }
     Collections.reverse(path);
     return path;
+  }
+
+  public boolean isWin() {
+    if (board == null) {
+      return false;
+    }
+
+    for (int i = 0; i < board.getRows(); i++) {
+      for (int j = 0; j < board.getCols(); j++) {
+        if (board.getCell(i, j) == 'P') {
+          if (j + 1 == board.getCols()) {
+            return true;
+          }
+        }
+      }
+    }
+    return false;
+  }
+
+  public void printState() {
+    for (int i = 0; i < board.getRows(); i++) {
+      if (i > 0) {
+        System.out.println("");
+      }
+      for (int j = 0; j < board.getCols(); j++) {
+        System.out.print(board.getCell(i, j));
+      }
+    }
   }
 
   public Board getBoard() {
