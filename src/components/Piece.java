@@ -1,3 +1,4 @@
+
 package components;
 
 import java.util.Set;
@@ -24,45 +25,72 @@ public class Piece {
   }
 
   public static Piece pieceFromBoard(char letter, int x, int y, Board board) {
-    if (letter == '.' || letter == 'K' || letter == '|') {
+    if (letter == '.' || letter == 'K' || letter == '|' || letter == '-') {
       return null;
     }
 
     currentLetter = letter;
 
+    // Determine orientation and size
     char orientation = pieceOrientation(letter, x, y, board);
     int size = pieceSize(letter, x, y, orientation, board);
+
+    System.out.println("Creating piece " + letter + " at [" + x + "][" + y +
+        "] with orientation " + orientation + " and size " + size);
 
     return new Piece(x, y, size, orientation, letter == PRIMARY_PIECE);
   }
 
   private static char pieceOrientation(char letter, int x, int y, Board board) {
-    if (y + 1 < board.getCols() && board.getCell(x, y + 1) == letter) {
+    // Check to the right (horizontally)
+    boolean hasHorizontalNeighbor = false;
+    if (x + 1 < board.getCols() && board.getCell(x + 1, y) == letter) {
+      hasHorizontalNeighbor = true;
+    }
+
+    // Check below (vertically)
+    boolean hasVerticalNeighbor = false;
+    if (y + 1 < board.getRows() && board.getCell(x, y + 1) == letter) {
+      hasVerticalNeighbor = true;
+    }
+    System.out
+        .println("Piece: " + letter + " Right: " + board.getCell(x + 1, y) + " Bottom: " + board.getCell(x, y + 1));
+
+    // Determine orientation based on neighbors
+    if (hasHorizontalNeighbor) {
+      System.out.println("Horizontal piece detected for " + letter + " at [" + x + "][" + y + "]");
       return 'H';
-    }
-
-    if (x + 1 < board.getRows() && board.getCell(x + 1, y) == letter) {
+    } else if (hasVerticalNeighbor) {
+      System.out.println("Vertical piece detected for " + letter + " at [" + x + "][" + y + "]");
       return 'V';
+    } else {
+      System.out.println("Single piece detected for " + letter + " at [" + x + "][" + y + "]");
+      return 'S'; // Single cell piece
     }
-
-    return 'S';
   }
 
   private static int pieceSize(char letter, int x, int y, char orientation, Board board) {
-    int size = 1;
+    int size = 1; // Start with size 1 (the cell itself)
+
     if (orientation == 'H') {
-      int j = y + 1;
-      while (j < board.getCols() && board.getCell(x, j) == letter) {
+      // Count horizontally
+      int j = x + 1;
+      while (j < board.getCols() && board.getCell(j, y) == letter) {
         size++;
         j++;
       }
+      System.out.println("Horizontal piece " + letter + " at [" + x + "][" + y + "] has size " + size);
     } else if (orientation == 'V') {
-      int i = x + 1;
-      while (i < board.getRows() && board.getCell(i, y) == letter) {
+      // Count vertically
+      int i = y + 1;
+      while (i < board.getRows() && board.getCell(x, i) == letter) {
         size++;
         i++;
       }
+      System.out.println("Vertical piece " + letter + " at [" + x + "][" + y + "] has size " + size);
     }
+    // For orientation 'S', size remains 1
+
     return size;
   }
 

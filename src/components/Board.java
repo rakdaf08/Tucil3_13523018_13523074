@@ -8,6 +8,10 @@ public class Board {
   private int rows;
   private HashMap<String, Piece> pieces;
 
+  public void printPieces() {
+    System.out.println(pieces);
+  }
+
   public static final char EMPTY_GRID = '.';
 
   public Board(char[][] grid) {
@@ -28,41 +32,95 @@ public class Board {
       System.out.println(Arrays.toString(row));
     }
 
-    System.out.println(pieces.keySet());
+    System.out.println("\n" + pieces.keySet());
   }
 
   private void initializePieces() {
     boolean[][] visited = new boolean[rows][cols];
 
+    // Print grid for debugging
+    System.out.println("Grid before initialization:");
     for (int i = 0; i < rows; i++) {
       for (int j = 0; j < cols; j++) {
-        if (!visited[i][j] && grid[i][j] != '.' && grid[i][j] != 'K') {
-          Piece piece = Piece.pieceFromBoard(grid[i][j], i, j, this);
+        System.out.print(grid[i][j]);
+      }
+      System.out.println();
+    }
+
+    for (int i = 0; i < rows; i++) {
+      for (int j = 0; j < cols; j++) {
+        char cell = grid[i][j];
+        if (!visited[i][j] && cell != '.' && cell != 'K' && cell != '-' && cell != '|') {
+          System.out.println("Found piece " + cell + " at position [" + i + "][" + j + "]");
+          Piece piece = Piece.pieceFromBoard(cell, j, i, this);
           if (piece != null) {
-            pieces.put(String.valueOf(grid[i][j]), piece);
+            pieces.put(String.valueOf(cell), piece);
+            System.out.println("Added piece " + cell + " with orientation " + piece.orientation +
+                " and size " + piece.size + " at [" + piece.row + "][" + piece.col + "]");
             markVisited(piece, visited);
+
+            // Print visited array after marking each piece
+            System.out.println("Visited array after marking piece " + cell + ":");
+            for (int r = 0; r < rows; r++) {
+              for (int c = 0; c < cols; c++) {
+                System.out.print(visited[r][c] ? "T " : "F ");
+              }
+              System.out.println();
+            }
           }
         }
       }
     }
+
+    // Print final visited array
+    System.out.println("Final visited array:");
+    for (boolean[] row : visited) {
+      System.out.println(Arrays.toString(row));
+    }
+
+    // Print the pieces found
+    System.out.println("Pieces found: " + pieces.size());
+    for (Map.Entry<String, Piece> entry : pieces.entrySet()) {
+      Piece p = entry.getValue();
+      System.out.println("Piece " + entry.getKey() + ": position [" + p.row + "][" + p.col +
+          "], orientation " + p.orientation + ", size " + p.size);
+    }
   }
 
   private void markVisited(Piece piece, boolean[][] visited) {
-    if (piece.orientation == 'H') {
-      for (int j = piece.col; j < Math.min(piece.col + piece.size, cols); j++) {
-        if (piece.row >= 0 && piece.row < rows && j >= 0 && j < cols) {
-          visited[piece.row][j] = true;
-        }
-      }
-    }
+    System.out.println("Marking as visited: piece at [" + piece.row + "][" + piece.col +
+        "] with orientation " + piece.orientation + " and size " + piece.size);
 
-    if (piece.orientation == 'V') {
-      for (int i = piece.row; i < Math.min(piece.row + piece.size, rows); i++) {
-        if (i >= 0 && i < rows && piece.col >= 0 && piece.col < cols) {
-          visited[i][piece.col] = true;
+    if (piece.orientation == 'H') {
+      for (int j = piece.col; j < piece.col + piece.size; j++) {
+        if (isValidPosition(piece.row, j)) {
+          System.out.println("  Marking [" + piece.row + "][" + j + "] as visited");
+          visited[piece.row][j] = true;
+        } else {
+          System.out.println("  WARNING: Position [" + piece.row + "][" + j + "] is out of bounds!");
         }
       }
+    } else if (piece.orientation == 'V') {
+      for (int i = piece.row; i < piece.row + piece.size; i++) {
+        if (isValidPosition(i, piece.col)) {
+          System.out.println("  Marking [" + i + "][" + piece.col + "] as visited");
+          visited[i][piece.col] = true;
+        } else {
+          System.out.println("  WARNING: Position [" + i + "][" + piece.col + "] is out of bounds!");
+        }
+      }
+    } else if (piece.orientation == 'S') {
+      // Single cell piece
+      if (isValidPosition(piece.row, piece.col)) {
+        System.out.println("  Marking single cell [" + piece.row + "][" + piece.col + "] as visited");
+        visited[piece.row][piece.col] = true;
+      }
     }
+  }
+
+  // Helper method to check if a position is valid
+  private boolean isValidPosition(int row, int col) {
+    return row >= 0 && row < rows && col >= 0 && col < cols;
   }
 
   public Board copy() {
@@ -162,10 +220,10 @@ public class Board {
   }
 
   public char getCell(int x, int y) {
-    if (x < 0 || x >= rows || y < 0 || y >= cols) {
+    if (x < 0 || y >= rows || y < 0 || x >= cols) {
       return '.';
     }
-    return this.grid[x][y];
+    return this.grid[y][x];
   }
 
   public HashMap<String, Piece> getPieces() {
