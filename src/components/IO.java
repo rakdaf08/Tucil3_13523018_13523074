@@ -107,17 +107,9 @@ public class IO {
                         // K is on bottom border
                         kRow = borderCol - 1;
                         kCol = kColPosition + 1;
-                    } else if (kColPosition == 0) {
-                        // K is on left border
-                        kRow = kRowPosition + 1;
-                        kCol = 0;
-                    } else if (kColPosition == b - 1) {
-                        // K is on right border
-                        kRow = kRowPosition + 1;
-                        kCol = borderRow - 1;
                     }
                     System.out.println("Found K in separate row, position: " + kColPosition);
-
+                    
                     // Remove this row from our array
                     List<String> rowsList = new ArrayList<>(Arrays.asList(boardRows));
                     rowsList.remove(i);
@@ -125,7 +117,9 @@ public class IO {
                     break;
                 }
             }
+            System.out.printf("KCOL: %d, KROW: %d\n", kCol, kRow);
 
+            
             if (boardRows.length != a) {
                 throw new IllegalArgumentException("Number of rows (" + boardRows.length
                         + ") does not match the specified dimension (" + a + ").");
@@ -151,6 +145,8 @@ public class IO {
                         kRowPosition = i;
                         kColPosition = kIndex;
                         // Remove the K from the string
+                        kRow = kRowPosition;
+                        kCol = kColPosition;
                         boardRows[i] = boardRows[i].substring(0, kIndex) + boardRows[i].substring(kIndex + 1);
                         kFound = true;
                         break;
@@ -215,18 +211,20 @@ public class IO {
                 }
                 System.out.println();
             }
-
+            
             innerGrid = new char[a][b];
             for (int i = 0; i < a; i++) {
                 for (int j = 0; j < b; j++) {
                     innerGrid[i][j] = grid[i + 1][j + 1];
                 }
             }
-
+            
         } catch (Exception e) {
             System.err.println(e);
             throw new IOException("Failed to parse input: " + e.getMessage());
         }
+        System.out.printf("KCOL: %d, KROW: %d\n", IO.getKCol(), IO.getKRow());
+
         return new Board(innerGrid);
     }
 

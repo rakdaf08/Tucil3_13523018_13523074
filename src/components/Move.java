@@ -27,16 +27,16 @@ public class Move {
 
     switch (direction) {
       case "UP":
-        endX -= steps;
+        endY -= steps;  // Move up reduces Y coordinate
         break;
       case "DOWN":
-        endX += steps;
+        endY += steps;  // Move down increases Y coordinate
         break;
       case "LEFT":
-        endY -= steps;
+        endX -= steps;  // Move left reduces X coordinate
         break;
       case "RIGHT":
-        endY += steps;
+        endX += steps;  // Move right increases X coordinate
         break;
     }
 

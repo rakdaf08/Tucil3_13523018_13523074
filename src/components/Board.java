@@ -31,88 +31,42 @@ public class Board {
     for (char[] row : grid) {
       System.out.println(Arrays.toString(row));
     }
-
     System.out.println("\n" + pieces.keySet());
   }
 
   private void initializePieces() {
     boolean[][] visited = new boolean[rows][cols];
 
-    // Print grid for debugging
-    System.out.println("Grid before initialization:");
-    for (int i = 0; i < rows; i++) {
-      for (int j = 0; j < cols; j++) {
-        System.out.print(grid[i][j]);
-      }
-      System.out.println();
-    }
-
     for (int i = 0; i < rows; i++) {
       for (int j = 0; j < cols; j++) {
         char cell = grid[i][j];
         if (!visited[i][j] && cell != '.' && cell != 'K' && cell != '-' && cell != '|') {
-          System.out.println("Found piece " + cell + " at position [" + i + "][" + j + "]");
           Piece piece = Piece.pieceFromBoard(cell, j, i, this);
           if (piece != null) {
             pieces.put(String.valueOf(cell), piece);
-            System.out.println("Added piece " + cell + " with orientation " + piece.orientation +
-                " and size " + piece.size + " at [" + piece.row + "][" + piece.col + "]");
             markVisited(piece, visited);
-
-            // Print visited array after marking each piece
-            System.out.println("Visited array after marking piece " + cell + ":");
-            for (int r = 0; r < rows; r++) {
-              for (int c = 0; c < cols; c++) {
-                System.out.print(visited[r][c] ? "T " : "F ");
-              }
-              System.out.println();
-            }
           }
         }
       }
     }
-
-    // Print final visited array
-    System.out.println("Final visited array:");
-    for (boolean[] row : visited) {
-      System.out.println(Arrays.toString(row));
-    }
-
-    // Print the pieces found
-    System.out.println("Pieces found: " + pieces.size());
-    for (Map.Entry<String, Piece> entry : pieces.entrySet()) {
-      Piece p = entry.getValue();
-      System.out.println("Piece " + entry.getKey() + ": position [" + p.row + "][" + p.col +
-          "], orientation " + p.orientation + ", size " + p.size);
-    }
   }
 
   private void markVisited(Piece piece, boolean[][] visited) {
-    System.out.println("Marking as visited: piece at [" + piece.row + "][" + piece.col +
-        "] with orientation " + piece.orientation + " and size " + piece.size);
-
     if (piece.orientation == 'H') {
       for (int j = piece.col; j < piece.col + piece.size; j++) {
         if (isValidPosition(piece.row, j)) {
-          System.out.println("  Marking [" + piece.row + "][" + j + "] as visited");
           visited[piece.row][j] = true;
-        } else {
-          System.out.println("  WARNING: Position [" + piece.row + "][" + j + "] is out of bounds!");
         }
       }
     } else if (piece.orientation == 'V') {
       for (int i = piece.row; i < piece.row + piece.size; i++) {
         if (isValidPosition(i, piece.col)) {
-          System.out.println("  Marking [" + i + "][" + piece.col + "] as visited");
           visited[i][piece.col] = true;
-        } else {
-          System.out.println("  WARNING: Position [" + i + "][" + piece.col + "] is out of bounds!");
         }
       }
     } else if (piece.orientation == 'S') {
       // Single cell piece
       if (isValidPosition(piece.row, piece.col)) {
-        System.out.println("  Marking single cell [" + piece.row + "][" + piece.col + "] as visited");
         visited[piece.row][piece.col] = true;
       }
     }
@@ -131,83 +85,161 @@ public class Board {
     return new Board(newGrid);
   }
 
-  public boolean isValidMove(Move move) {
-    int[] end = move.getEndPosition();
-    int endX = end[0], endY = end[1];
-
-    if (endX < 0 || endX >= rows || endY < 0 || endY >= cols) {
-      return false;
-    }
-
-    int startX = move.getStartX();
-    int startY = move.getStartY();
-    String direction = move.getDirection();
-
-    if (direction.equals("UP") || direction.equals("DOWN")) {
-      for (int x = Math.min(startX, endX); x <= Math.max(startX, endX); x++) {
-        if (x != startX && grid[x][startY] != '.')
-          return false;
-      }
-    } else {
-      for (int y = Math.min(startY, endY); y <= Math.max(startY, endY); y++) {
-        if (y != startY && grid[startX][y] != '.')
-          return false;
-      }
-    }
-    return true;
+   public boolean isValidMove(Move move) { 
+    int[] end = move.getEndPosition(); 
+    int endCol = end[0], endRow = end[1]; 
+ 
+    // Check if the end position is inside the grid 
+    if (endRow < 0 || endRow >= rows || endCol < 0 || endCol >= cols) { 
+      return false; 
+    } 
+ 
+    Piece piece = move.getPiece(); 
+    int startCol = move.getStartX(); 
+    int startRow = move.getStartY(); 
+    String direction = move.getDirection(); 
+ 
+    // Check if the path is clear for the move 
+    if (direction.equals("UP")) { 
+      for (int row = startRow - 1; row >= endRow; row--) { 
+        if (grid[row][startCol] != '.') { 
+          return false; 
+        } 
+      } 
+    } else if (direction.equals("DOWN")) { 
+      for (int row = startRow + piece.getSize(); row <= endRow + piece.getSize() - 1; row++) { 
+        if (row >= rows || grid[row][startCol] != '.') { 
+          return false; 
+        } 
+      } 
+    } else if (direction.equals("LEFT")) { 
+      for (int col = startCol - 1; col >= endCol; col--) { 
+        if (grid[startRow][col] != '.') { 
+          return false; 
+        } 
+      } 
+    } else if (direction.equals("RIGHT")) { 
+      for (int col = startCol + piece.getSize(); col <= endCol + piece.getSize() - 1; col++) { 
+        if (col >= cols || grid[startRow][col] != '.') { 
+          return false; 
+        } 
+      } 
+    } 
+     
+    return true; 
   }
 
-  public void makeMove(Move move) {
-    if (!isValidMove(move))
-      throw new IllegalArgumentException("Invalid move");
+public void makeMove(Move move) {
+    if (!isValidMove(move)) {
+      throw new IllegalArgumentException("Invalid move: " + move);
+    }
 
     Piece piece = move.getPiece();
-    int startX = move.getStartX();
-    int startY = move.getStartY();
+    int startCol = move.getStartX();
+    int startRow = move.getStartY();
     int[] end = move.getEndPosition();
-
-    for (int i = 0; i < piece.size; i++) {
-      if (piece.orientation == 'H') {
-        grid[startX][startY + i] = '.';
-      } else {
-        grid[startX + i][startY] = '.';
+    int endCol = end[0];
+    int endRow = end[1];
+    
+    // Get the piece character
+    char pieceChar = ' ';
+    for (Map.Entry<String, Piece> entry : pieces.entrySet()) {
+      if (entry.getKey().charAt(0) == piece.getLetter()) {
+        pieceChar = entry.getKey().charAt(0);
+        break;
       }
     }
 
-    for (int i = 0; i < piece.size; i++) {
-      if (piece.orientation == 'H') {
-        grid[end[0]][end[1] + i] = piece.isPrimary ? 'P' : grid[startX][startY];
-      } else {
-        grid[end[0] + i][end[1]] = piece.isPrimary ? 'P' : grid[startX][startY];
+    // Clear the old piece position
+    if (piece.getOrientation() == 'H') {
+      for (int i = 0; i < piece.getSize(); i++) {
+        grid[startRow][startCol + i] = '.';
       }
+    } else if (piece.getOrientation() == 'V') {
+      for (int i = 0; i < piece.getSize(); i++) {
+        grid[startRow + i][startCol] = '.';
+      }
+    } else {
+      grid[startRow][startCol] = '.';
     }
+
+    // Place the piece in the new position
+    if (piece.getOrientation() == 'H') {
+      for (int i = 0; i < piece.getSize(); i++) {
+        grid[endRow][endCol + i] = pieceChar;
+      }
+    } else if (piece.getOrientation() == 'V') {
+      for (int i = 0; i < piece.getSize(); i++) {
+        grid[endRow + i][endCol] = pieceChar;
+      }
+    } else {
+      grid[endRow][endCol] = pieceChar;
+    }
+
+    // Update piece position
+    piece.setCol(endCol);
+    piece.setRow(endRow);
   }
 
   public List<Move> getPossibleMoves() {
     List<Move> moves = new ArrayList<>();
-    for (Piece piece : pieces.values()) {
-      if (piece.orientation == 'H') {
-        for (int steps = -cols; steps <= cols; steps++) {
-          if (steps == 0)
-            continue;
-          Move move = new Move(piece, piece.col, piece.row,
-              steps < 0 ? "LEFT" : "RIGHT",
-              Math.abs(steps));
-          if (isValidMove(move))
-            moves.add(move);
+    
+    for (Map.Entry<String, Piece> entry : pieces.entrySet()) {
+      Piece piece = entry.getValue();
+      
+      if (piece.getOrientation() == 'H') {
+        // For horizontal pieces, try LEFT and RIGHT moves
+        // Try moves to the left
+        for (int steps = 1; steps <= cols; steps++) {
+          if (piece.getCol() - steps < 0) break; // Don't go beyond the left edge
+          
+          Move leftMove = new Move(piece, piece.getCol(), piece.getRow(), "LEFT", steps);
+          if (isValidMove(leftMove)) {
+            moves.add(leftMove);
+          } else {
+            break; // Stop if we hit an obstacle
+          }
         }
-      } else {
-        for (int steps = -rows; steps <= rows; steps++) {
-          if (steps == 0)
-            continue;
-          Move move = new Move(piece, piece.col, piece.row,
-              steps < 0 ? "UP" : "DOWN",
-              Math.abs(steps));
-          if (isValidMove(move))
-            moves.add(move);
+        
+        // Try moves to the right
+        for (int steps = 1; steps <= cols; steps++) {
+          if (piece.getCol() + piece.getSize() + steps - 1 >= cols) break; // Don't go beyond the right edge
+          
+          Move rightMove = new Move(piece, piece.getCol(), piece.getRow(), "RIGHT", steps);
+          if (isValidMove(rightMove)) {
+            moves.add(rightMove);
+          } else {
+            break; // Stop if we hit an obstacle
+          }
+        }
+      } else if (piece.getOrientation() == 'V') {
+        // For vertical pieces, try UP and DOWN moves
+        // Try moves upward
+        for (int steps = 1; steps <= rows; steps++) {
+          if (piece.getRow() - steps < 0) break; // Don't go beyond the top edge
+          
+          Move upMove = new Move(piece, piece.getCol(), piece.getRow(), "UP", steps);
+          if (isValidMove(upMove)) {
+            moves.add(upMove);
+          } else {
+            break; // Stop if we hit an obstacle
+          }
+        }
+        
+        // Try moves downward
+        for (int steps = 1; steps <= rows; steps++) {
+          if (piece.getRow() + piece.getSize() + steps - 1 >= rows) break; // Don't go beyond the bottom edge
+          
+          Move downMove = new Move(piece, piece.getCol(), piece.getRow(), "DOWN", steps);
+          if (isValidMove(downMove)) {
+            moves.add(downMove);
+          } else {
+            break; // Stop if we hit an obstacle
+          }
         }
       }
     }
+    
     return moves;
   }
 
@@ -244,6 +276,17 @@ public class Board {
   public int hashCode() {
     return Arrays.deepHashCode(this.grid);
   }
+
+@Override
+public String toString() {
+    StringBuilder sb = new StringBuilder();
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            sb.append(grid[i][j]);
+        }
+    }
+    return sb.toString();
+}
 
   public char[][] getGrid() {
     return grid;

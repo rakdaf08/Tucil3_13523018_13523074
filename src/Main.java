@@ -39,8 +39,7 @@ public class Main {
           break;
         case 3:
           solution = AStar.solve(initialBoard);
-          System.out.println("A* Search not implemented yet");
-          break;
+            break;
 
         default:
           System.out.println("Invalid choice");
@@ -61,7 +60,7 @@ public class Main {
           Move move = path.get(i);
           System.out.printf("%d. Move piece %c %s by %d steps\n",
               i + 1,
-              move.getPiece().isPrimary() ? 'P' : move.getPiece().getOrientation(),
+              move.getPiece().isPrimary() ? 'P' : move.getPiece().getLetter(),
               move.getDirection(),
               move.getSteps());
         }
@@ -80,7 +79,7 @@ public class Main {
           Move move = path.get(i);
           output[i + 3] = String.format("%d. Move piece %c %s by %d steps",
               i + 1,
-              move.getPiece().isPrimary() ? 'P' : move.getPiece().getOrientation(),
+              move.getPiece().isPrimary() ? 'P' : move.getPiece().getLetter(),
               move.getDirection(),
               move.getSteps());
         }

@@ -9,13 +9,15 @@ public class Piece {
   protected int size;
   protected int totalPiece;
   protected char orientation;
+  protected char letter;
   protected boolean isPrimary;
 
   private static char currentLetter;
 
   private static final char PRIMARY_PIECE = 'P';
 
-  public Piece(int x, int y, int size, char orientation, boolean isPrimary) {
+  public Piece(char letter, int x, int y, int size, char orientation, boolean isPrimary) {
+    this.letter = letter;
     this.col = x;
     this.row = y;
     this.size = size;
@@ -35,13 +37,7 @@ public class Piece {
     char orientation = pieceOrientation(letter, x, y, board);
     int size = pieceSize(letter, x, y, orientation, board);
 
-    System.out.println("Creating piece " + letter + " at [" + x + "][" + y +
-        "] with orientation " + orientation + " and size " + size);
-
-    System.out.println("Creating piece " + letter + " at [" + x + "][" + y +
-        "] with orientation " + orientation + " and size " + size);
-
-    return new Piece(x, y, size, orientation, letter == PRIMARY_PIECE);
+    return new Piece(letter, x, y, size, orientation, letter == PRIMARY_PIECE);
   }
 
   private static char pieceOrientation(char letter, int x, int y, Board board) {
@@ -56,18 +52,12 @@ public class Piece {
     if (y + 1 < board.getRows() && board.getCell(x, y + 1) == letter) {
       hasVerticalNeighbor = true;
     }
-    System.out
-        .println("Piece: " + letter + " Right: " + board.getCell(x + 1, y) + " Bottom: " + board.getCell(x, y + 1));
-
     // Determine orientation based on neighbors
     if (hasHorizontalNeighbor) {
-      System.out.println("Horizontal piece detected for " + letter + " at [" + x + "][" + y + "]");
       return 'H';
     } else if (hasVerticalNeighbor) {
-      System.out.println("Vertical piece detected for " + letter + " at [" + x + "][" + y + "]");
       return 'V';
     } else {
-      System.out.println("Single piece detected for " + letter + " at [" + x + "][" + y + "]");
       return 'S'; // Single cell piece
     }
   }
@@ -82,7 +72,6 @@ public class Piece {
         size++;
         j++;
       }
-      System.out.println("Horizontal piece " + letter + " at [" + x + "][" + y + "] has size " + size);
     } else if (orientation == 'V') {
       // Count vertically
       int i = y + 1;
@@ -90,9 +79,7 @@ public class Piece {
         size++;
         i++;
       }
-      System.out.println("Vertical piece " + letter + " at [" + x + "][" + y + "] has size " + size);
     }
-    // For orientation 'S', size remains 1
 
     return size;
   }
@@ -132,9 +119,49 @@ public class Piece {
   public boolean isPrimary() {
     return isPrimary;
   }
+  
+  public boolean isHorizontal() {
+    return orientation == 'H';
+  }
+  
+  public boolean isVertical() {
+    return orientation == 'V';
+  }
 
   @Override
   public String toString() {
     return String.valueOf(currentLetter);
+  }
+
+  public void setSize(int size) {
+    this.size = size;
+  }
+
+  public void setTotalPiece(int totalPiece) {
+    this.totalPiece = totalPiece;
+  }
+
+  public void setOrientation(char orientation) {
+    this.orientation = orientation;
+  }
+
+  public char getLetter() {
+    return letter;
+  }
+
+  public void setLetter(char letter) {
+    this.letter = letter;
+  }
+
+  public void setPrimary(boolean isPrimary) {
+    this.isPrimary = isPrimary;
+  }
+
+  public static void setCurrentLetter(char currentLetter) {
+    Piece.currentLetter = currentLetter;
+  }
+
+  public static char getPrimaryPiece() {
+    return PRIMARY_PIECE;
   }
 }

@@ -8,28 +8,59 @@ import java.util.PriorityQueue;
 import java.util.Set;
 
 import components.Board;
+import components.IO;
 import components.Move;
 import components.Piece;
 import components.State;
 
 public class AStar {
     
-    public static State solve(Board initialBoard) {
+      public static State solve(Board initialBoard) {
         // Priority queue for A* algorithm
         PriorityQueue<State> openList = new PriorityQueue<>();
         Set<String> closedList = new HashSet<>();
         
         // Start with the initial state
-        int initialHeuristic = calculateHeuristic(initialBoard);
+        int initialHeuristic = Heuristic.pieceToDest(initialBoard);
         State initialState = new State(initialBoard, 0, initialHeuristic, null, null);
         openList.add(initialState);
+        int statesExplored = 0;
         
         while (!openList.isEmpty()) {
             // Get the state with the lowest f value
             State current = openList.poll();
+            statesExplored++;
+
+            int kCol = IO.getKCol();
+            int kRow = IO.getKRow();
+            Piece primaryPiece = current.getBoard().getPieces().get("P");
+            int pRowStart = primaryPiece.getRow();
+            int pColStart = primaryPiece.getCol();
+            int pRowEnd = pRowStart + (primaryPiece.isVertical() ? primaryPiece.getSize() - 1 : 0);
+            int pColEnd = pColStart + (primaryPiece.isHorizontal() ? primaryPiece.getSize() - 1 : 0);
+            current.getBoard().printBoard();
+
+            System.out.printf("States: %d, Primary Start Row/Col: (%d, %d), End Row/Col: (%d, %d), Exit Row/Col: (%d, %d)\n",
+                    statesExplored,
+                    pRowStart,
+                    pColStart,
+                    pRowEnd,
+                    pColEnd,
+                    kRow,
+                    kCol
+            );
             
             // Check if we've reached the goal state
+            if (statesExplored % 100 == 0) {
+                System.out.println("States explored: " + statesExplored);
+                System.out.println("\nCurrent f-value: " + current.getF());
+                // System.out.println();
+                // return current;
+            }
+            
             if (current.isWin()) {
+                System.out.println("Solution found after exploring " + statesExplored + " states!");
+                current.getBoard().printBoard();
                 return current;
             }
             
@@ -45,98 +76,59 @@ public class AStar {
             for (Move move : possibleMoves) {
                 // Create a copy of the board and apply the move
                 Board nextBoard = current.getBoard().copy();
-                nextBoard.makeMove(move);
-                
-                // Create new state
-                int heuristic = calculateHeuristic(nextBoard);
-                State nextState = new State(nextBoard, current.getCostSoFar() + 1, heuristic, current, move);
-                
-                // If this board hasn't been explored yet, add it to the open list
-                if (!closedList.contains(nextBoard.toString())) {
-                    openList.add(nextState);
+                // nextBoard.printBoard();
+                try {
+                    nextBoard.makeMove(move);
+                    
+                    // Create new state
+                    int heuristic = Heuristic.pieceToDest(nextBoard);
+                    State nextState = new State(nextBoard, current.getCostSoFar() + 1, heuristic, current, move);
+                    
+                    // If this board hasn't been explored yet, add it to the open list
+                    String nextBoardHash = nextBoard.toString();
+                    if (!closedList.contains(nextBoardHash)) {
+                        openList.add(nextState);
+                    }
+                } catch (IllegalArgumentException e) {
+                    // Skip invalid moves
+                    System.err.println("Warning: " + e.getMessage());
                 }
             }
         }
         
         // No solution found
+        System.out.println("No solution found after exploring " + statesExplored + " states.");
         return null;
     }
     
-    // Calculate heuristic value (estimated cost to goal)
-    private static int calculateHeuristic(Board board) {
-        // Get the primary piece (usually labeled as 'P')
-        Piece primaryPiece = board.getPieces().get("P");
-        
-        if (primaryPiece == null) {
-            return 0; // This shouldn't happen in a valid Rush Hour puzzle
+    public static void printSolution(State solutionState) {
+        if (solutionState == null) {
+            System.out.println("No solution found.");
+            return;
         }
         
-        // For Rush Hour, a simple heuristic is the number of blocking pieces
-        // plus the distance to the exit
-        int blockingPieces = 0;
-        int distanceToExit = 0;
+        List<Move> moves = solutionState.getPathFromRoot();
+        System.out.println("Solution found in " + moves.size() + " moves:");
         
-        // Assuming the exit is on the right side and primary piece moves horizontally
-        if (primaryPiece.getOrientation() == 'H') {
-            int exitX = board.getCols() - 1;
-            int exitY = primaryPiece.getRow(); // Assume the exit is in the same row
+        State currentState = new State(solutionState.getBoard().copy(), 0, 0, null, null);
+        while (currentState.getParent() != null) {
+            currentState = currentState.getParent();
+        }
+        
+        // Print initial state
+        System.out.println("Initial state:");
+        currentState.printState();
+        System.out.println();
+        
+        for (int i = 0; i < moves.size(); i++) {
+            Move move = moves.get(i);
+            Board board = currentState.getBoard().copy();
+            board.makeMove(move);
+            currentState = new State(board, 0, 0, null, null);
             
-            // Calculate distance to exit
-            distanceToExit = exitX - (primaryPiece.getCol() + primaryPiece.getSize() - 1);
-            
-            // Count blocking pieces
-            for (int x = primaryPiece.getCol() + primaryPiece.getSize(); x <= exitX; x++) {
-                if (board.getGrid()[exitY][x] != Board.EMPTY_GRID) {
-                    blockingPieces++;
-                }
-            }
+            System.out.println("Move " + (i + 1) + ": " + move);
+            currentState.printState();
+            System.out.println();
         }
-        
-        return blockingPieces + distanceToExit;
-    }
-    
-    // Check if the current state is the goal state
-    private static boolean isGoalState(Board board) {
-        Piece primaryPiece = board.getPieces().get("P");
-        
-        if (primaryPiece == null) {
-            return false;
-        }
-        
-        // For Rush Hour, goal state is when the primary piece can exit
-        // Assuming the exit is on the right side
-        if (primaryPiece.getOrientation() == 'H') {
-            int rightEdge = primaryPiece.getCol() + primaryPiece.getSize() - 1;
-            int exitCol = board.getCols() - 1;
-            
-            // Check if there's a clear path to the exit
-            boolean clearPath = true;
-            for (int col = rightEdge + 1; col <= exitCol; col++) {
-                if (board.getGrid()[primaryPiece.getRow()][col] != Board.EMPTY_GRID) {
-                    clearPath = false;
-                    break;
-                }
-            }
-            
-            return clearPath;
-        }
-        
-        return false;
-    }
-    
-    // Reconstruct the path from the goal state to the initial state
-    private static List<String> reconstructPath(State goalState) {
-        List<String> path = new ArrayList<>();
-        State current = goalState;
-        
-        // Trace back from goal to start
-        while (current.getParent() != null) {
-            path.add(current.getMove().toString());
-            current = current.getParent();
-        }
-        
-        // Reverse to get path from start to goal
-        Collections.reverse(path);
-        return path;
-    }
+}
 }

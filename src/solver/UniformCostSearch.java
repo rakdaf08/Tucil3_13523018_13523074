@@ -43,7 +43,7 @@ public class UniformCostSearch {
       visited.add(currentBoard);
       nodesExpanded++;
 
-      if (current.isWin()) {
+      if (current.isWin()&& current != null) {
         return current;
       }
 
