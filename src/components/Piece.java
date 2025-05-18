@@ -38,6 +38,9 @@ public class Piece {
     System.out.println("Creating piece " + letter + " at [" + x + "][" + y +
         "] with orientation " + orientation + " and size " + size);
 
+    System.out.println("Creating piece " + letter + " at [" + x + "][" + y +
+        "] with orientation " + orientation + " and size " + size);
+
     return new Piece(x, y, size, orientation, letter == PRIMARY_PIECE);
   }
 
