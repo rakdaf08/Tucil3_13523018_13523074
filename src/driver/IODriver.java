@@ -1,11 +1,7 @@
 package driver;
 
-import java.beans.PersistenceDelegate;
-import java.util.HashMap;
-
 import components.IO;
-import components.Piece;
-import components.Config;
+import components.Board;
 
 public class IODriver {
     public static void main(String[] args) {
@@ -14,12 +10,12 @@ public class IODriver {
         String outputPath = "test/2.txt";
         int a, b, n;
         char[][] grid;
-        try{
+        try {
             IO.isFileExists(inputPath);
             inputString = IO.readFile(inputPath);
-            Config config = IO.parseInput(inputString);
-            config.printConfig();
-            
+            Board board = IO.parseInput(inputString);
+            board.printBoard();
+
             // String[] sizeStr = inputString[0].split(" ");
             // a = Integer.parseInt(sizeStr[0]);
             // b = Integer.parseInt(sizeStr[1]);
@@ -29,17 +25,17 @@ public class IODriver {
 
             // String gridString = inputString[2];
             // for(int i= 0; i < a ; i++){
-            //     for(int j = 0; j < b; j++){
-            //         int index = i*a + j;
-            //         grid[i][j] = gridString.charAt(index);
-            //     }
+            // for(int j = 0; j < b; j++){
+            // int index = i*a + j;
+            // grid[i][j] = gridString.charAt(index);
+            // }
             // }
 
             // for(int i= 0; i < a ; i++){
-            //     for(int j = 0; j < b; j++){
-            //         System.out.print(grid[i][j]);
-            //     }
-            //     System.out.println();
+            // for(int j = 0; j < b; j++){
+            // System.out.print(grid[i][j]);
+            // }
+            // System.out.println();
             // }
 
             // HashMap<Character, Piece> pieces = IO.gridToPieces(grid);
@@ -47,9 +43,8 @@ public class IODriver {
 
             /* Test Save File */
             // IO.writeOutputToFile(inputString, outputPath);
-            
 
-        }catch(Exception e){
+        } catch (Exception e) {
             System.out.println("Error: " + e);
         }
     }

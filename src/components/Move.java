@@ -8,6 +8,12 @@ public class Move {
   private int steps;
 
   public Move(Piece piece, int startX, int startY, String direction, int steps) {
+    if (piece == null) {
+      throw new IllegalArgumentException("Piece cannot be null");
+    }
+    if (direction == null) {
+      throw new IllegalArgumentException("Direction cannot be null");
+    }
     this.piece = piece;
     this.startX = startX;
     this.startY = startY;

@@ -5,7 +5,7 @@ import java.util.*;
 
 public class UniformCostSearch {
   private PriorityQueue<State> queue;
-  private HashSet<String> visited;
+  private HashSet<Board> visited;
   private int nodesExpanded;
 
   public UniformCostSearch() {
@@ -34,13 +34,13 @@ public class UniformCostSearch {
 
     while (!queue.isEmpty()) {
       State current = queue.poll();
-      String boardString = boardToString(current.getBoard());
+      Board currentBoard = current.getBoard();
 
-      if (visited.contains(boardString)) {
+      if (visited.contains(currentBoard)) {
         continue;
       }
 
-      visited.add(boardString);
+      visited.add(currentBoard);
       nodesExpanded++;
 
       if (current.isWin()) {

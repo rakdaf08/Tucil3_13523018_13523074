@@ -9,20 +9,26 @@ public class Board {
   private HashMap<String, Piece> pieces;
 
   public static final char EMPTY_GRID = '.';
-  
-  public Board(char[][] grid) {
-    this.grid = grid;
-    this.cols = grid[0].length;
-    this.rows = grid.length;
-    this.pieces = new HashMap<>();
 
-    for (int i = 0; i < rows; i++) {
-      for (int j = 0; j < cols; j++) {
-        this.grid[i][j] = grid[i][j];
-      }
+  public Board(char[][] grid) {
+    if (grid == null || grid.length == 0 || grid[0].length == 0) {
+      throw new IllegalArgumentException("Invalid grid dimensions");
     }
 
+    this.grid = grid;
+    this.rows = grid.length;
+    this.cols = grid[0].length;
+    this.pieces = new HashMap<>();
     initializePieces();
+  }
+
+  public void printBoard() {
+    System.out.println("A: " + cols + " B: " + rows + " N: " + pieces.size());
+    for (char[] row : grid) {
+      System.out.println(Arrays.toString(row));
+    }
+
+    System.out.println(pieces.keySet());
   }
 
   private void initializePieces() {
@@ -43,14 +49,18 @@ public class Board {
 
   private void markVisited(Piece piece, boolean[][] visited) {
     if (piece.orientation == 'H') {
-      for (int j = piece.x; j < piece.x + piece.size; j++) {
-        visited[piece.y][j] = true;
+      for (int j = piece.col; j < Math.min(piece.col + piece.size, cols); j++) {
+        if (piece.row >= 0 && piece.row < rows && j >= 0 && j < cols) {
+          visited[piece.row][j] = true;
+        }
       }
     }
 
     if (piece.orientation == 'V') {
-      for (int i = piece.y; i < piece.y + piece.size; i++) {
-        visited[i][piece.x] = true;
+      for (int i = piece.row; i < Math.min(piece.row + piece.size, rows); i++) {
+        if (i >= 0 && i < rows && piece.col >= 0 && piece.col < cols) {
+          visited[i][piece.col] = true;
+        }
       }
     }
   }
@@ -58,7 +68,7 @@ public class Board {
   public Board copy() {
     char[][] newGrid = new char[rows][cols];
     for (int i = 0; i < rows; i++) {
-      newGrid[i] = grid[i].clone();
+      System.arraycopy(grid[i], 0, newGrid[i], 0, cols);
     }
     return new Board(newGrid);
   }
@@ -122,7 +132,7 @@ public class Board {
         for (int steps = -cols; steps <= cols; steps++) {
           if (steps == 0)
             continue;
-          Move move = new Move(piece, piece.x, piece.y,
+          Move move = new Move(piece, piece.col, piece.row,
               steps < 0 ? "LEFT" : "RIGHT",
               Math.abs(steps));
           if (isValidMove(move))
@@ -132,7 +142,7 @@ public class Board {
         for (int steps = -rows; steps <= rows; steps++) {
           if (steps == 0)
             continue;
-          Move move = new Move(piece, piece.x, piece.y,
+          Move move = new Move(piece, piece.col, piece.row,
               steps < 0 ? "UP" : "DOWN",
               Math.abs(steps));
           if (isValidMove(move))
@@ -152,10 +162,28 @@ public class Board {
   }
 
   public char getCell(int x, int y) {
+    if (x < 0 || x >= rows || y < 0 || y >= cols) {
+      return '.';
+    }
     return this.grid[x][y];
   }
 
   public HashMap<String, Piece> getPieces() {
     return this.pieces;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o)
+      return true;
+    if (o == null || getClass() != o.getClass())
+      return false;
+    Board board = (Board) o;
+    return Arrays.deepEquals(this.grid, board.grid);
+  }
+
+  @Override
+  public int hashCode() {
+    return Arrays.deepHashCode(this.grid);
   }
 }

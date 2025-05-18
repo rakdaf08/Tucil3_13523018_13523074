@@ -1,18 +1,22 @@
 package components;
 
+import java.util.Set;
+
 public class Piece {
-  protected int x;
-  protected int y;
+  protected int col;
+  protected int row;
   protected int size;
   protected int totalPiece;
   protected char orientation;
   protected boolean isPrimary;
 
+  private static char currentLetter;
+
   private static final char PRIMARY_PIECE = 'P';
 
   public Piece(int x, int y, int size, char orientation, boolean isPrimary) {
-    this.x = x;
-    this.y = y;
+    this.col = x;
+    this.row = y;
     this.size = size;
     this.orientation = orientation;
     this.totalPiece = 0;
@@ -20,12 +24,29 @@ public class Piece {
   }
 
   public static Piece pieceFromBoard(char letter, int x, int y, Board board) {
-    if (letter == '.' || letter == 'K') {
+    if (letter == '.' || letter == 'K' || letter == '|') {
       return null;
     }
 
+    currentLetter = letter;
+
     char orientation = pieceOrientation(letter, x, y, board);
-    int size = pieceSize(letter, x, y, board);
+    int size = pieceSize(letter, x, y, orientation, board);
+
+    return new Piece(x, y, size, orientation, letter == PRIMARY_PIECE);
+  }
+
+  public static Piece pieceFromBoard(char letter, int x, int y, Board board, Set<String> visited) {
+    String position = x + "," + y;
+    if (visited.contains(position) || letter == '.' || letter == 'K' || letter == '|') {
+      return null;
+    }
+
+    visited.add(position);
+    currentLetter = letter;
+
+    char orientation = pieceOrientation(letter, x, y, board);
+    int size = pieceSize(letter, x, y, orientation, board, visited);
 
     return new Piece(x, y, size, orientation, letter == PRIMARY_PIECE);
   }
@@ -42,17 +63,17 @@ public class Piece {
     return 'S';
   }
 
-  private static int pieceSize(char letter, int x, int y, Board board) {
+  private static int pieceSize(char letter, int x, int y, char orientation, Board board) {
     int size = 1;
-    if (pieceOrientation(letter, x, y, board) == 'H') {
-      int j = y;
-      while (j < board.getCols() && board.getCell(x, j + 1) == letter) {
+    if (orientation == 'H') {
+      int j = y + 1;
+      while (j < board.getCols() && board.getCell(x, j) == letter) {
         size++;
         j++;
       }
-    } else if (pieceOrientation(letter, x, y, board) == 'V') {
-      int i = x;
-      while (i < board.getRows() && board.getCell(i + 1, y) == letter) {
+    } else if (orientation == 'V') {
+      int i = x + 1;
+      while (i < board.getRows() && board.getCell(i, y) == letter) {
         size++;
         i++;
       }
@@ -60,55 +81,64 @@ public class Piece {
     return size;
   }
 
-  public int getX() {
-    return x;
+  private static int pieceSize(char letter, int x, int y, char orientation, Board board, Set<String> visited) {
+    int size = 1;
+    if (orientation == 'H') {
+      int j = y + 1;
+      while (j < board.getCols() && board.getCell(x, j) == letter) {
+        visited.add(x + "," + j); // Mark cells as visited
+        size++;
+        j++;
+      }
+    } else if (orientation == 'V') {
+      int i = x + 1;
+      while (i < board.getRows() && board.getCell(i, y) == letter) {
+        visited.add(i + "," + y); // Mark cells as visited
+        size++;
+        i++;
+      }
+    }
+    return size;
   }
 
-  public void setX(int x) {
-    this.x = x;
+  public static char getCurrentLetter() {
+    return currentLetter;
   }
 
-  public int getY() {
-    return y;
+  public int getCol() {
+    return col;
   }
 
-  public void setY(int y) {
-    this.y = y;
+  public void setCol(int x) {
+    this.col = x;
+  }
+
+  public int getRow() {
+    return row;
+  }
+
+  public void setRow(int y) {
+    this.row = y;
   }
 
   public int getSize() {
     return size;
   }
 
-  public void setSize(int size) {
-    this.size = size;
-  }
-
   public int getTotalPiece() {
     return totalPiece;
-  }
-
-  public void setTotalPiece(int totalPiece) {
-    this.totalPiece = totalPiece;
   }
 
   public char getOrientation() {
     return orientation;
   }
 
-  public void setOrientation(char orientation) {
-    this.orientation = orientation;
-  }
-
   public boolean isPrimary() {
     return isPrimary;
   }
 
-  public void setPrimary(boolean isPrimary) {
-    this.isPrimary = isPrimary;
-  }
-
-  public static char getPrimaryPiece() {
-    return PRIMARY_PIECE;
+  @Override
+  public String toString() {
+    return String.valueOf(currentLetter);
   }
 }

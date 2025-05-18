@@ -29,7 +29,10 @@ public class State implements Comparable<State> {
   public boolean equals(Object o) {
     if (!(o instanceof State))
       return false;
-    return board.equals(((State) o).board);
+    State other = (State) o;
+    if (this.board == null || other.board == null)
+      return false;
+    return board.equals(other.board);
   }
 
   @Override
@@ -59,11 +62,15 @@ public class State implements Comparable<State> {
           Piece piece = board.getPieces().get("P");
           char orientation = piece.orientation;
           if (orientation == 'H') {
-            // if ()
+            if (piece.getCol() == IO.getKCol()) {
+              return true;
+            }
           }
 
           if (orientation == 'V') {
-
+            if (piece.getRow() == IO.getKRow()) {
+              return true;
+            }
           }
         }
       }

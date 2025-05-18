@@ -4,33 +4,19 @@ import components.*;
 
 public class Heuristic {
   public static int pieceToDest(Board board) {
-    // Find K (exit) position
-    int exitRow = -1;
-    int exitCol = -1;
-    for (int i = 0; i < board.getRows(); i++) {
-      for (int j = 0; j < board.getCols(); j++) {
-        if (board.getCell(i, j) == 'K') {
-          exitRow = i;
-          exitCol = j;
-          break;
-        }
-      }
-    }
+    int exitRow = IO.getKRow();
+    int exitCol = IO.getKCol();
 
-    // Find P (primary piece) position
     Piece primary = board.getPieces().get("P");
     if (primary == null)
       return 0;
 
-    // Calculate base distance
     int distance = 0;
     if (primary.getOrientation() == 'H') {
-      // For horizontal piece, calculate horizontal distance to exit
-      int pieceEndCol = primary.getY() + primary.getSize() - 1;
+      int pieceEndCol = primary.getCol() + primary.getSize() - 1;
       distance = Math.abs(exitCol - pieceEndCol);
     } else {
-      // For vertical piece, calculate vertical distance to exit
-      int pieceEndRow = primary.getX() + primary.getSize() - 1;
+      int pieceEndRow = primary.getRow() + primary.getSize() - 1;
       distance = Math.abs(exitRow - pieceEndRow);
     }
 
@@ -44,18 +30,16 @@ public class Heuristic {
     int count = 0;
 
     if (primary.getOrientation() == 'H') {
-      // Count pieces blocking horizontal path to exit
-      int row = primary.getX();
-      int startCol = primary.getY() + primary.getSize();
+      int row = primary.getRow();
+      int startCol = primary.getCol() + primary.getSize();
       for (int col = startCol; col <= exitCol; col++) {
         if (board.getCell(row, col) != '.' && board.getCell(row, col) != 'K') {
           count++;
         }
       }
     } else {
-      // Count pieces blocking vertical path to exit
-      int col = primary.getY();
-      int startRow = primary.getX() + primary.getSize();
+      int col = primary.getCol();
+      int startRow = primary.getRow() + primary.getSize();
       for (int row = startRow; row <= exitRow; row++) {
         if (board.getCell(row, col) != '.' && board.getCell(row, col) != 'K') {
           count++;

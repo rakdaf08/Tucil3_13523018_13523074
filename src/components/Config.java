@@ -1,6 +1,6 @@
 package components;
 
-import java.util.Arrays;
+import java.util.*;
 
 public class Config {
     int a, b, n, kx, ky;
@@ -14,9 +14,6 @@ public class Config {
         this.ky = ky;
         this.grid = grid;
     }
-
-
-    public Config() {}
 
     public void printConfig() {
         System.out.println("A: " + a + " B: " + b + " N: " + n);
