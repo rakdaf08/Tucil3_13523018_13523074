@@ -36,21 +36,6 @@ public class Piece {
     return new Piece(x, y, size, orientation, letter == PRIMARY_PIECE);
   }
 
-  public static Piece pieceFromBoard(char letter, int x, int y, Board board, Set<String> visited) {
-    String position = x + "," + y;
-    if (visited.contains(position) || letter == '.' || letter == 'K' || letter == '|') {
-      return null;
-    }
-
-    visited.add(position);
-    currentLetter = letter;
-
-    char orientation = pieceOrientation(letter, x, y, board);
-    int size = pieceSize(letter, x, y, orientation, board, visited);
-
-    return new Piece(x, y, size, orientation, letter == PRIMARY_PIECE);
-  }
-
   private static char pieceOrientation(char letter, int x, int y, Board board) {
     if (y + 1 < board.getCols() && board.getCell(x, y + 1) == letter) {
       return 'H';
@@ -74,26 +59,6 @@ public class Piece {
     } else if (orientation == 'V') {
       int i = x + 1;
       while (i < board.getRows() && board.getCell(i, y) == letter) {
-        size++;
-        i++;
-      }
-    }
-    return size;
-  }
-
-  private static int pieceSize(char letter, int x, int y, char orientation, Board board, Set<String> visited) {
-    int size = 1;
-    if (orientation == 'H') {
-      int j = y + 1;
-      while (j < board.getCols() && board.getCell(x, j) == letter) {
-        visited.add(x + "," + j); // Mark cells as visited
-        size++;
-        j++;
-      }
-    } else if (orientation == 'V') {
-      int i = x + 1;
-      while (i < board.getRows() && board.getCell(i, y) == letter) {
-        visited.add(i + "," + y); // Mark cells as visited
         size++;
         i++;
       }
