@@ -244,4 +244,28 @@ public class Board {
   public int hashCode() {
     return Arrays.deepHashCode(this.grid);
   }
+
+  public char[][] getGrid() {
+    return grid;
+  }
+
+  public void setGrid(char[][] grid) {
+    this.grid = grid;
+  }
+
+  public void setCols(int cols) {
+    this.cols = cols;
+  }
+
+  public void setRows(int rows) {
+    this.rows = rows;
+  }
+
+  public void setPieces(HashMap<String, Piece> pieces) {
+    this.pieces = pieces;
+  }
+
+  public static char getEmptyGrid() {
+    return EMPTY_GRID;
+  }
 }

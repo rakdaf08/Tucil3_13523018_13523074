@@ -36,8 +36,12 @@ public class Main {
           solution = ucs.solve(initialBoard);
           break;
         case 2:
+          break;
+        case 3:
+          solution = AStar.solve(initialBoard);
           System.out.println("A* Search not implemented yet");
           break;
+
         default:
           System.out.println("Invalid choice");
           return;
