@@ -14,10 +14,25 @@ public class Main {
       // Parse input and create board
       String[] inputString = IO.readFile(filepath);
       Board initialBoard = IO.parseInput(inputString);
-
       // Print initial board state
       System.out.println("\nInitial Board State:");
       initialBoard.printBoard();
+
+      
+      if(initialBoard.getPrimaryPiece().getOrientation() == 'H'){
+        if(initialBoard.getPrimaryPiece().getRow() != IO.getKRow()){
+          System.out.println("Unsolvable: Exit location and primary piece is not alligned");
+          scanner.close();
+          return;
+        }
+      }
+      else{
+        if(initialBoard.getPrimaryPiece().getCol() != IO.getKCol()){
+          System.out.println("Unsolvable: Exit location and primary piece is not alligned");
+          scanner.close();
+          return;
+        }
+      }
 
       // Choose search algorithm
       System.out.println("\nChoose search algorithm:");

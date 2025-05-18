@@ -93,13 +93,18 @@ public class Board {
     if (endRow < 0 || endRow >= rows || endCol < 0 || endCol >= cols) { 
       return false; 
     } 
- 
+    
     Piece piece = move.getPiece(); 
     int startCol = move.getStartX(); 
     int startRow = move.getStartY(); 
     String direction = move.getDirection(); 
  
     // Check if the path is clear for the move 
+    if ((piece.getOrientation() == 'H' && (direction.equals("UP") || direction.equals("DOWN"))) ||  
+        (piece.getOrientation() == 'V' && (direction.equals("LEFT") || direction.equals("RIGHT")))) { 
+      return false; 
+    }
+ 
     if (direction.equals("UP")) { 
       for (int row = startRow - 1; row >= endRow; row--) { 
         if (grid[row][startCol] != '.') { 
@@ -260,6 +265,10 @@ public void makeMove(Move move) {
 
   public HashMap<String, Piece> getPieces() {
     return this.pieces;
+  }
+
+  public Piece getPrimaryPiece(){
+    return pieces.get("P");
   }
 
   @Override
