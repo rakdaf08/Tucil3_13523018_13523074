@@ -20,11 +20,11 @@ public class MainGUI extends JFrame {  private Board board;
   private Timer animationTimer;
   private List<State> solutionStates;
   private int currentStateIndex;
-  private JButton playButton;
-  private JButton nextButton;
+  private JButton playButton;  private JButton nextButton;
   private JButton prevButton;
   private JList<String> movesList;
   private DefaultListModel<String> movesListModel;
+  private JLabel exitLocationLabel;
   private static final int ANIMATION_DELAY = 500; // 1 second between states
 
   public static void main(String[] args) {
@@ -112,15 +112,29 @@ public class MainGUI extends JFrame {  private Board board;
     scrollPane.setPreferredSize(new Dimension(250, 0));
     centerPanel.add(scrollPane, BorderLayout.EAST);
     
-    add(centerPanel, BorderLayout.CENTER);
-
+    add(centerPanel, BorderLayout.CENTER);    // Create a bottom panel to hold both controls and status
+    JPanel bottomPanel = new JPanel(new BorderLayout());
+    
+    // Create status panel
+    JPanel statusPanel = new JPanel(new BorderLayout());
     statusLabel = new JLabel("Please load a board file.");
-    add(statusLabel, BorderLayout.SOUTH);
+    statusLabel.setBorder(BorderFactory.createEmptyBorder(0,10,0,10));
+    exitLocationLabel = new JLabel("Exit location: Not loaded");
+    exitLocationLabel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
+    statusPanel.add(statusLabel, BorderLayout.CENTER);
+    statusPanel.add(exitLocationLabel, BorderLayout.EAST);
+    
+    // Add status panel to the top of bottom panel
+    bottomPanel.add(statusPanel, BorderLayout.NORTH);
+    
+    // Create and add animation controls to bottom panel
+    createAnimationControls(bottomPanel);
+    
+    // Add the combined bottom panel to the frame
+    add(bottomPanel, BorderLayout.SOUTH);
 
     setSize(700, 700);
     setVisible(true);
-
-    createAnimationControls();
 
     animationTimer = new Timer(ANIMATION_DELAY, e -> showNextState());
     animationTimer.setRepeats(true);
@@ -158,10 +172,10 @@ public class MainGUI extends JFrame {  private Board board;
     if (res == JFileChooser.APPROVE_OPTION) {
       currentFile = chooser.getSelectedFile();
       try {
-        String[] input = components.IO.readFile(currentFile.getPath());
-        board = components.IO.parseInput(input);
+        String[] input = components.IO.readFile(currentFile.getPath());        board = components.IO.parseInput(input);
         drawBoard();
         statusLabel.setText("Board loaded: " + currentFile.getName());
+        updateExitLocationLabel();
         solveButton.setEnabled(true);
       } catch (Exception ex) {
         showErrorDialog(ex.getMessage());
@@ -187,39 +201,60 @@ public class MainGUI extends JFrame {  private Board board;
 
     int rows = board.getRows();
     int cols = board.getCols();
-    boardPanel.setLayout(new GridLayout(rows, cols));
+    boardPanel.setLayout(new GridLayout(rows + 2, cols + 2)); // Add space for border cells
     
     // Calculate the size to maintain square cells
-    int size = Math.min(getHeight() - 150, getWidth() - 300); // Account for controls and moves list
-    size = Math.min(size, Math.min(600, Math.max(300, size))); // Set min/max bounds
+    int size = Math.min(getHeight() - 150, getWidth() - 300);
+    size = Math.min(size, Math.min(600, Math.max(300, size)));
     boardPanel.setPreferredSize(new Dimension(size, size));
     
     char[][] grid = board.getGrid();
+    int kRow = components.IO.getKRow();
+    int kCol = components.IO.getKCol();
 
-    for (int i = 0; i < rows; i++) {
-      for (int j = 0; j < cols; j++) {
+    // Create the board with border cells
+    for (int i = -1; i <= rows; i++) {
+      for (int j = -1; j <= cols; j++) {
         JPanel cell = new JPanel();
         cell.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         cell.setOpaque(true);
 
-        char piece = grid[i][j];
-        if (piece == '.') {
-          cell.setBackground(Color.WHITE);
-        } else if (piece == 'P') {
-          cell.setBackground(Color.RED); // Primary piece
-        } else if (piece == 'K') {
-          cell.setBackground(Color.GREEN); // Exit
-        } else {
-          // Generate a consistent color for each piece letter
-          cell.setBackground(new Color(
-              (piece * 83) % 255,
-              (piece * 157) % 255,
-              (piece * 223) % 255));
+        // Border cells
+        if (i == -1 || i == rows || j == -1 || j == cols) {
+          cell.setBackground(Color.LIGHT_GRAY);
+          
+          // Add exit marker 'K'
+          if ((i == kRow && j == kCol) || 
+              (kRow == -1 && i == -1 && j == kCol) ||
+              (kRow == rows && i == rows && j == kCol) ||
+              (kCol == -1 && i == kRow && j == -1) ||
+              (kCol == cols && i == kRow && j == cols)) {
+            cell.setBackground(Color.GREEN);
+            JLabel label = new JLabel("K", SwingConstants.CENTER);
+            label.setFont(new Font("Arial", Font.BOLD, 20));
+            cell.add(label);
+          }
         }
+        // Main board cells
+        else {
+          char piece = grid[i][j];
+          if (piece == '.') {
+            cell.setBackground(Color.WHITE);
+          } else if (piece == 'P') {
+            cell.setBackground(Color.RED);
+          } else {
+            cell.setBackground(new Color(
+                (piece * 83) % 255,
+                (piece * 157) % 255,
+                (piece * 223) % 255));
+          }
 
-        JLabel label = new JLabel(String.valueOf(piece), SwingConstants.CENTER);
-        label.setFont(new Font("Arial", Font.BOLD, 20));
-        cell.add(label);
+          if (piece != '.') {
+            JLabel label = new JLabel(String.valueOf(piece), SwingConstants.CENTER);
+            label.setFont(new Font("Arial", Font.BOLD, 20));
+            cell.add(label);
+          }
+        }
 
         boardPanel.add(cell);
       }
@@ -342,10 +377,13 @@ public class MainGUI extends JFrame {  private Board board;
             prevButton.setEnabled(true);
             playButton.setEnabled(true);
             nextButton.setEnabled(true);
-
-            // Show initial state
+              // Show initial state
             updateBoardDisplay();
             saveButton.setEnabled(true);
+            
+            // Automatically start the animation
+            animationTimer.start();
+            playButton.setText("⏸");
           } else {
             System.out.println("No solution found!");
             statusLabel.setText("No solution found.");
@@ -360,9 +398,9 @@ public class MainGUI extends JFrame {  private Board board;
     };
     worker.execute();
   }
-
-  private void createAnimationControls() {
+  private void createAnimationControls(JPanel bottomPanel) {
     JPanel controlPanel = new JPanel();
+    controlPanel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0)); // Add some vertical padding
 
     prevButton = new JButton("←");
     prevButton.setEnabled(false);
@@ -380,7 +418,7 @@ public class MainGUI extends JFrame {  private Board board;
     controlPanel.add(playButton);
     controlPanel.add(nextButton);
 
-    add(controlPanel, BorderLayout.SOUTH);
+    bottomPanel.add(controlPanel, BorderLayout.CENTER);
   }
 
   // Add these methods to handle animation
@@ -410,7 +448,6 @@ public class MainGUI extends JFrame {  private Board board;
       updateBoardDisplay();
     }
   }
-
   private void updateBoardDisplay() {
     if (solutionStates != null && currentStateIndex >= 0 && currentStateIndex < solutionStates.size()) {
       State currentState = solutionStates.get(currentStateIndex);
@@ -419,7 +456,26 @@ public class MainGUI extends JFrame {  private Board board;
       statusLabel.setText("Move " + currentStateIndex + " of " + (solutionStates.size() - 1));
     }
   }
-  
 
-  
-}
+  private void updateExitLocationLabel() {
+    int kRow = components.IO.getKRow();
+    int kCol = components.IO.getKCol();
+    int rows = board.getRows();
+    int cols = board.getCols();
+    
+    String location = "Exit (K) location: ";
+    if (kRow == -1) {
+        location += "Top border, column " + (kCol + 1);
+    } else if (kRow == rows) {
+        location += "Bottom border, column " + (kCol + 1);
+    } else if (kCol == -1) {
+        location += "Left border, row " + (kRow + 1);
+    } else if (kCol == cols) {
+        location += "Right border, row " + (kRow + 1);
+    } else {
+        location += "row " + (kRow + 1) + ", column " + (kCol + 1);
+    }
+    exitLocationLabel.setText(location);
+  }
+
+  }
