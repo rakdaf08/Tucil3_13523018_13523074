@@ -44,21 +44,21 @@ public class MainGUI extends JFrame {
     });
     topPanel.add(algoBox);
 
-     // Heuristic Selection
+    // Heuristic Selection
     heuristicBox = new JComboBox<>(new String[] {
         "Jarak Piece ke K", "Jumlah Piece Penghalang", "Gabungan Dua Heuristic"
     });
     heuristicBox.setEnabled(false); // Disabled by default
     topPanel.add(heuristicBox);
-    
+
     // Enable heuristicBox only for GBFS and A*
     algoBox.addActionListener(e -> {
-        String selectedAlgo = (String) algoBox.getSelectedItem();
-        if (selectedAlgo.equals("Greedy Best First Search") || selectedAlgo.equals("A*")) {
-            heuristicBox.setEnabled(true);
-        } else {
-            heuristicBox.setEnabled(false);
-        }
+      String selectedAlgo = (String) algoBox.getSelectedItem();
+      if (selectedAlgo.equals("Greedy Best First Search") || selectedAlgo.equals("A*")) {
+        heuristicBox.setEnabled(true);
+      } else {
+        heuristicBox.setEnabled(false);
+      }
     });
 
     solveButton = new JButton("Solve");
@@ -100,13 +100,13 @@ public class MainGUI extends JFrame {
     }
   }
 
-    private void showErrorDialog(String message) {
-      JOptionPane.showMessageDialog(
-          this,                           // Parent component
-          message,                        // Message text
-          "Error Loading Board",          // Dialog title
-          JOptionPane.ERROR_MESSAGE       // Message type
-      );
+  private void showErrorDialog(String message) {
+    JOptionPane.showMessageDialog(
+        this, // Parent component
+        message, // Message text
+        "Error Loading Board", // Dialog title
+        JOptionPane.ERROR_MESSAGE // Message type
+    );
   }
 
   private void drawBoard() {
@@ -184,7 +184,7 @@ public class MainGUI extends JFrame {
       statusLabel.setText("Failed to reset board: " + ex.getMessage());
       return;
     }
-    
+
     System.out.println("Starting solve process...");
     statusLabel.setText("Solving...");
     solveButton.setEnabled(false);
@@ -323,7 +323,4 @@ public class MainGUI extends JFrame {
       statusLabel.setText("Move " + currentStateIndex + " of " + (solutionStates.size() - 1));
     }
   }
-  
-
-  
 }
