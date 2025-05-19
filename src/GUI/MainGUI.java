@@ -4,7 +4,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class MainGUI extends JFrame {
@@ -13,7 +16,7 @@ public class MainGUI extends JFrame {
   private JLabel statusLabel;
   private JComboBox<String> algoBox;
   private JComboBox<String> heuristicBox;
-  private JButton solveButton, loadButton;
+  private JButton solveButton, loadButton, saveButton;
   private File currentFile;
   private Timer animationTimer;
   private List<State> solutionStates;
@@ -30,13 +33,18 @@ public class MainGUI extends JFrame {
   public MainGUI() {
     setTitle("Rush Hour Solver");
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    setLayout(new BorderLayout());
-
-    // Top panel for controls
+    setLayout(new BorderLayout());    // Top panel for controls
     JPanel topPanel = new JPanel();
     loadButton = new JButton("Load Board");
     loadButton.addActionListener(e -> loadBoard());
     topPanel.add(loadButton);
+    
+    // Save Button
+    saveButton = new JButton("Save Solution");
+
+    saveButton.addActionListener(e -> saveSolutionToFile());
+    saveButton.setEnabled(false);
+    topPanel.add(saveButton);
 
     // Algorithm Selection
     algoBox = new JComboBox<>(new String[] {
@@ -66,6 +74,7 @@ public class MainGUI extends JFrame {
     solveButton.setEnabled(false);
     topPanel.add(solveButton);
 
+
     add(topPanel, BorderLayout.NORTH);
 
     boardPanel = new JPanel();
@@ -82,6 +91,32 @@ public class MainGUI extends JFrame {
     animationTimer = new Timer(ANIMATION_DELAY, e -> showNextState());
     animationTimer.setRepeats(true);
   }
+
+  private void saveSolutionToFile() {
+    JFileChooser fileChooser = new JFileChooser("test/output");
+    fileChooser.setDialogTitle("Save Solution File");
+    int userSelection = fileChooser.showSaveDialog(this);
+
+    if (userSelection == JFileChooser.APPROVE_OPTION) {
+        File fileToSave = fileChooser.getSelectedFile();
+
+        try {
+            // Assuming `finalState` is your solved board's final state
+            State finalState = solutionStates.get(solutionStates.size()-1);
+            if ( finalState != null) {
+                String[] solutionSteps = finalState.getSolutionPath();
+                Files.write(fileToSave.toPath(), Arrays.asList(solutionSteps));
+                JOptionPane.showMessageDialog(this, "Solution saved to " + fileToSave.getAbsolutePath());
+            } else {
+                JOptionPane.showMessageDialog(this, "No solution available. Please solve the board first.");
+            }
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(this, "Error saving file: " + ex.getMessage());
+            ex.printStackTrace();
+        }
+    }
+}
+
 
   private void loadBoard() {
     JFileChooser chooser = new JFileChooser("test/input");
@@ -189,6 +224,7 @@ public class MainGUI extends JFrame {
     statusLabel.setText("Solving...");
     solveButton.setEnabled(false);
 
+    
     SwingWorker<components.State, Void> worker = new SwingWorker<components.State, Void>() {
       long time = 0;
 
@@ -252,6 +288,8 @@ public class MainGUI extends JFrame {
             currentStateIndex = 0;
             statusLabel.setText("Solution found! " + (solutionStates.size() - 1) + " moves");
 
+            // Enable save Button
+
             // Enable animation controls
             prevButton.setEnabled(true);
             playButton.setEnabled(true);
@@ -259,6 +297,7 @@ public class MainGUI extends JFrame {
 
             // Show initial state
             updateBoardDisplay();
+            saveButton.setEnabled(true);
           } else {
             System.out.println("No solution found!");
             statusLabel.setText("No solution found.");

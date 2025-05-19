@@ -303,14 +303,13 @@ public class IO {
                 System.out.println("Masukkan nama file e.g (output): ");
                 String filename = scanner.nextLine();
                 outputPath = outputPath.concat(filename);
-                String outputPathTXT = outputPath.concat(".txt");
 
-                boolean isFileExists = isFileExists(outputPathTXT);
+                boolean isFileExists = isFileExists(outputPath);
                 if (isFileExists) {
                     System.out.println("Terdapat file dengan nama yang sama apakah anda ingin overwrite? (y/N)");
                     char overwrite = scanner.next().charAt(0);
                     if (overwrite == 'Y' || overwrite == 'y') {
-                        writeOutputToFile(output, outputPathTXT);
+                        writeOutputToFile(output, outputPath);
                         System.out.println("File berhasil di simpan pada " + outputPath);
                         break;
                     } else if (overwrite == 'n' || overwrite == 'N') {
@@ -321,7 +320,7 @@ public class IO {
                         break;
                     }
                 } else {
-                    writeOutputToFile(output, outputPathTXT);
+                    writeOutputToFile(output, outputPath);
                     System.out.println("File berhasil di simpan pada " + outputPath);
                 }
 

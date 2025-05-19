@@ -51,6 +51,52 @@ public class State implements Comparable<State> {
     return path;
   }
 
+  public String[] getSolutionPath() {
+    List<String> steps = new ArrayList<>();
+    State current = this;
+    List<State> path = new ArrayList<>();
+    // Trace the path back to the root
+    while (current != null) {
+        path.add(current);
+        current = current.parent;
+    }
+    Collections.reverse(path);
+
+    // Format the path into strings
+    for (State state : path) {
+        int index = state.getCostSoFar() + 1;
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format("%d. Move: ", index));
+        
+        // Include the move description if not the initial state
+        Move move = state.getMove();
+        if (move != null) {
+          
+        sb.append(String.format("Move piece %c %s by %d steps",
+                            move.getPiece().getLetter(),
+                            move.getDirection(),
+                            move.getSteps()));}
+                             else {
+          sb.append("Initial State");
+        }
+        
+        sb.append("\nHeuristic: ").append(state.getHeuristic());
+        sb.append("\nBoard:\n");
+        
+        // Print the board
+        for (int i = 0; i < state.getBoard().getRows(); i++) {
+            for (int j = 0; j < state.getBoard().getCols(); j++) {
+                sb.append(state.getBoard().getCell(j, i));
+            }
+            sb.append("\n");
+        }
+        
+        steps.add(sb.toString());
+    }
+
+    return steps.toArray(new String[0]);
+}
+
   public boolean isWin() {
   if (board == null) {
       return false;
