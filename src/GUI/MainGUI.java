@@ -155,7 +155,7 @@ public class MainGUI extends JFrame {
               break;
             case "A*":
               System.out.println("Starting A*...");
-              solution = AStar.solve(board.copy());
+              solution = AStar.solve(board.copy(), "pieceToDest");
               break;
             case "Iterative Deepening DFS":
               System.out.println("Starting IDDFS...");
