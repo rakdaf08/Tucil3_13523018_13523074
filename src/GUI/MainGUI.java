@@ -198,6 +198,15 @@ public class MainGUI extends JFrame {
         String algo = (String) algoBox.getSelectedItem();
         System.out.println("Using algorithm: " + algo);
         long start = System.currentTimeMillis();
+        String heuristic = heuristicBox.getSelectedItem().toString();
+        if(heuristic == "Jarak Piece ke K"){
+          heuristic = "pieceToDest";
+        }else if(heuristic == "Jumlah Piece Penghalang"){
+          heuristic = "countBlockingPieces";
+        }else{
+          heuristic = "combineTwo";
+        }
+
         try {
           switch (algo) {
             case "Uniform Cost Search":
@@ -206,11 +215,11 @@ public class MainGUI extends JFrame {
               break;
             case "Greedy Best First Search":
               System.out.println("Starting GBFS...");
-              solution = new GreedyBestFirstSearch().solve(board.copy(), heuristicBox.getSelectedItem().toString());
+              solution = new GreedyBestFirstSearch().solve(board.copy(), heuristic);
               break;
             case "A*":
               System.out.println("Starting A*...");
-              solution = AStar.solve(board.copy(), heuristicBox.getSelectedItem().toString());
+              solution = AStar.solve(board.copy(), heuristic);
               break;
             case "Iterative Deepening DFS":
               System.out.println("Starting IDDFS...");

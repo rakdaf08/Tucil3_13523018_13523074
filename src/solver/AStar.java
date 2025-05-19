@@ -6,7 +6,7 @@ import components.*;
 public class AStar {
 
     public static State solve(Board initialBoard, String heuristicType) {
-        PriorityQueue<State> openList = new PriorityQueue<>(Comparator.comparingInt(State::getHeuristic));
+        PriorityQueue<State> openList = new PriorityQueue<>();
         Set<String> closedList = new HashSet<>();
 
         int initialHeuristic = Heuristic.getHeuristic(initialBoard, heuristicType);
@@ -18,28 +18,28 @@ public class AStar {
             State current = openList.poll();
             statesExplored++;
 
-            int kCol = IO.getKCol();
-            int kRow = IO.getKRow();
-            Piece primaryPiece = current.getBoard().getPieces().get("P");
-            int pRowStart = primaryPiece.getRow();
-            int pColStart = primaryPiece.getCol();
-            int pRowEnd = pRowStart + (primaryPiece.isVertical() ? primaryPiece.getSize() - 1 : 0);
-            int pColEnd = pColStart + (primaryPiece.isHorizontal() ? primaryPiece.getSize() - 1 : 0);
-            current.getBoard().printBoard();
+            // int kCol = IO.getKCol();
+            // int kRow = IO.getKRow();
+            // Piece primaryPiece = current.getBoard().getPieces().get("P");
+            // int pRowStart = primaryPiece.getRow();
+            // int pColStart = primaryPiece.getCol();
+            // int pRowEnd = pRowStart + (primaryPiece.isVertical() ? primaryPiece.getSize() - 1 : 0);
+            // int pColEnd = pColStart + (primaryPiece.isHorizontal() ? primaryPiece.getSize() - 1 : 0);
+            // current.getBoard().printBoard();
 
-            System.out.printf(
-                    "States: %d, Primary Start Row/Col: (%d, %d), End Row/Col: (%d, %d), Exit Row/Col: (%d, %d)\n",
-                    statesExplored,
-                    pRowStart,
-                    pColStart,
-                    pRowEnd,
-                    pColEnd,
-                    kRow,
-                    kCol);
+            // System.out.printf(
+            //         "States: %d, Primary Start Row/Col: (%d, %d), End Row/Col: (%d, %d), Exit Row/Col: (%d, %d)\n",
+            //         statesExplored,
+            //         pRowStart,
+            //         pColStart,
+            //         pRowEnd,
+            //         pColEnd,
+            //         kRow,
+            //         kCol);
 
             if (current.isWin()) {
                 System.out.println("Solution found after exploring " + statesExplored + " states!");
-                current.getBoard().printBoard();
+                // current.getBoard().printBoard();
                 return current;
             }
 
