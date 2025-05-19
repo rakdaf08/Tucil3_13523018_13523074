@@ -24,7 +24,7 @@ public class Piece {
     this.isPrimary = isPrimary;
   }
 
-  public static Piece pieceFromBoard(char letter, int x, int y, Board board) {
+  public static Piece pieceFromBoard(char letter, int x, int y, Board board) throws Exception {
     if (letter == '.' || letter == 'K' || letter == '|' || letter == '-') {
       return null;
     }
@@ -33,6 +33,9 @@ public class Piece {
 
     char orientation = pieceOrientation(letter, x, y, board);
     int size = pieceSize(letter, x, y, orientation, board);
+    if(size == 1){
+      throw new Exception("Piece size cannot be 1");
+    }
 
     return new Piece(letter, x, y, size, orientation, letter == PRIMARY_PIECE);
   }
@@ -43,18 +46,11 @@ public class Piece {
       hasHorizontalNeighbor = true;
     }
 
-    boolean hasVerticalNeighbor = false;
-    if (y + 1 < board.getRows() && board.getCell(x, y + 1) == letter) {
-      hasVerticalNeighbor = true;
-    }
-
     if (hasHorizontalNeighbor) {
       return 'H';
-    } else if (hasVerticalNeighbor) {
-      return 'V';
     } else {
-      return 'S';
-    }
+      return 'V';
+    } 
   }
 
   private static int pieceSize(char letter, int x, int y, char orientation, Board board) {
@@ -66,7 +62,7 @@ public class Piece {
         size++;
         j++;
       }
-    } else if (orientation == 'V') {
+    } else {
       int i = y + 1;
       while (i < board.getRows() && board.getCell(x, i) == letter) {
         size++;

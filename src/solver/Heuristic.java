@@ -33,7 +33,7 @@ public class Heuristic {
       int row = primary.getRow();
       int startCol = primary.getCol() + primary.getSize();
       for (int col = startCol; col <= exitCol; col++) {
-        if (board.getCell(row, col) != '.' && board.getCell(row, col) != 'K') {
+        if (board.getCell(col, row) != '.' && board.getCell(col, row) != 'K') {
           count++;
         }
       }
@@ -41,7 +41,7 @@ public class Heuristic {
       int col = primary.getCol();
       int startRow = primary.getRow() + primary.getSize();
       for (int row = startRow; row <= exitRow; row++) {
-        if (board.getCell(row, col) != '.' && board.getCell(row, col) != 'K') {
+        if (board.getCell(col, row) != '.' && board.getCell(col, row) != 'K') {
           count++;
         }
       }

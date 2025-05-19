@@ -102,11 +102,11 @@ public class IO {
                     if (kRowPosition == -1) {
                         // K is on top border
                         kRow = 0;
-                        kCol = kColPosition + 1;
+                        kCol = kColPosition;
                     } else if (kRowPosition == a) {
                         // K is on bottom border
                         kRow = borderCol - 1;
-                        kCol = kColPosition + 1;
+                        kCol = kColPosition;
                     }
                     System.out.println("Found K in separate row, position: " + kColPosition);
 
