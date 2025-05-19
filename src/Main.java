@@ -49,6 +49,8 @@ public class Main {
           solution = ucs.solve(initialBoard);
           break;
         case 2:
+          GreedyBestFirstSearch gbfs = new GreedyBestFirstSearch();
+          solution = gbfs.solve(initialBoard);
           break;
         case 3:
           solution = AStar.solve(initialBoard);

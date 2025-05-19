@@ -64,7 +64,7 @@ public class UniformCostSearch {
       }
     }
 
-    return null; // No solution found
+    return null;
   }
 
   public int getNodesExpanded() {

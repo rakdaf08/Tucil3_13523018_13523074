@@ -1,31 +1,21 @@
 package solver;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.PriorityQueue;
-import java.util.Set;
-
-import components.Board;
-import components.IO;
-import components.Move;
-import components.Piece;
-import components.State;
+import java.util.*;
+import components.*;
 
 public class AStar {
-    
-      public static State solve(Board initialBoard) {
+
+    public static State solve(Board initialBoard) {
         // Priority queue for A* algorithm
         PriorityQueue<State> openList = new PriorityQueue<>();
         Set<String> closedList = new HashSet<>();
-        
+
         // Start with the initial state
         int initialHeuristic = Heuristic.pieceToDest(initialBoard);
         State initialState = new State(initialBoard, 0, initialHeuristic, null, null);
         openList.add(initialState);
         int statesExplored = 0;
-        
+
         while (!openList.isEmpty()) {
             // Get the state with the lowest f value
             State current = openList.poll();
@@ -40,16 +30,16 @@ public class AStar {
             int pColEnd = pColStart + (primaryPiece.isHorizontal() ? primaryPiece.getSize() - 1 : 0);
             current.getBoard().printBoard();
 
-            System.out.printf("States: %d, Primary Start Row/Col: (%d, %d), End Row/Col: (%d, %d), Exit Row/Col: (%d, %d)\n",
+            System.out.printf(
+                    "States: %d, Primary Start Row/Col: (%d, %d), End Row/Col: (%d, %d), Exit Row/Col: (%d, %d)\n",
                     statesExplored,
                     pRowStart,
                     pColStart,
                     pRowEnd,
                     pColEnd,
                     kRow,
-                    kCol
-            );
-            
+                    kCol);
+
             // Check if we've reached the goal state
             if (statesExplored % 100 == 0) {
                 System.out.println("States explored: " + statesExplored);
@@ -57,20 +47,20 @@ public class AStar {
                 // System.out.println();
                 // return current;
             }
-            
+
             if (current.isWin()) {
                 System.out.println("Solution found after exploring " + statesExplored + " states!");
                 current.getBoard().printBoard();
                 return current;
             }
-            
+
             // Add current state to closed list to avoid revisiting
             String boardHash = current.getBoard().toString();
             if (closedList.contains(boardHash)) {
                 continue;
             }
             closedList.add(boardHash);
-            
+
             // Generate all possible next states
             List<Move> possibleMoves = current.getBoard().getPossibleMoves();
             for (Move move : possibleMoves) {
@@ -79,11 +69,11 @@ public class AStar {
                 // nextBoard.printBoard();
                 try {
                     nextBoard.makeMove(move);
-                    
+
                     // Create new state
                     int heuristic = Heuristic.pieceToDest(nextBoard);
                     State nextState = new State(nextBoard, current.getCostSoFar() + 1, heuristic, current, move);
-                    
+
                     // If this board hasn't been explored yet, add it to the open list
                     String nextBoardHash = nextBoard.toString();
                     if (!closedList.contains(nextBoardHash)) {
@@ -95,40 +85,40 @@ public class AStar {
                 }
             }
         }
-        
+
         // No solution found
         System.out.println("No solution found after exploring " + statesExplored + " states.");
         return null;
     }
-    
+
     public static void printSolution(State solutionState) {
         if (solutionState == null) {
             System.out.println("No solution found.");
             return;
         }
-        
+
         List<Move> moves = solutionState.getPathFromRoot();
         System.out.println("Solution found in " + moves.size() + " moves:");
-        
+
         State currentState = new State(solutionState.getBoard().copy(), 0, 0, null, null);
         while (currentState.getParent() != null) {
             currentState = currentState.getParent();
         }
-        
+
         // Print initial state
         System.out.println("Initial state:");
         currentState.printState();
         System.out.println();
-        
+
         for (int i = 0; i < moves.size(); i++) {
             Move move = moves.get(i);
             Board board = currentState.getBoard().copy();
             board.makeMove(move);
             currentState = new State(board, 0, 0, null, null);
-            
+
             System.out.println("Move " + (i + 1) + ": " + move);
             currentState.printState();
             System.out.println();
         }
-}
+    }
 }
