@@ -53,11 +53,24 @@ public class Main {
           System.out.println("Choose heuristic:");
           System.out.println("1. Jarak Piece ke K");
           System.out.println("2. Jumlah Piece Penghalang");
-          System.out.print("Enter heuristic (1-2): ");
+          System.out.println("3. Gabungan Dua Heuristic");
+          System.out.print("Enter heuristic (1-3): ");
           int hChoice = scanner.nextInt();
           scanner.nextLine();
 
-          String heuristicType = (hChoice == 2) ? "countBlockingPieces" : "pieceToDest";
+          String heuristicType;
+          if (hChoice < 1 || hChoice > 3) {
+            System.out.println("Invalid heuristic choice, using default.");
+            heuristicType = "pieceToDest";
+          }
+
+          if (hChoice == 1) {
+            heuristicType = "pieceToDest";
+          } else if (hChoice == 2) {
+            heuristicType = "countBlockingPieces";
+          } else {
+            heuristicType = "combineTwo";
+          }
 
           GreedyBestFirstSearch gbfs = new GreedyBestFirstSearch();
           solution = gbfs.solve(initialBoard, heuristicType);

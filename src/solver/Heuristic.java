@@ -48,12 +48,19 @@ public class Heuristic {
     return count;
   }
 
+  public static int combineTwo(Board board) {
+    int count = pieceToDest(board) + countBlockingPieces(board);
+
+    return count;
+  }
+
   public static int getHeuristic(Board board, String heuristicType) {
     if ("countBlockingPieces".equalsIgnoreCase(heuristicType)) {
       return countBlockingPieces(board);
-    } else {
-      // Default: pieceToDest
+    } else if ("pieceToDest".equalsIgnoreCase(heuristicType)) {
       return pieceToDest(board);
+    } else {
+      return combineTwo(board);
     }
   }
 }
