@@ -109,7 +109,7 @@ public class IO {
                         kCol = kColPosition + 1;
                     }
                     System.out.println("Found K in separate row, position: " + kColPosition);
-                    
+
                     // Remove this row from our array
                     List<String> rowsList = new ArrayList<>(Arrays.asList(boardRows));
                     rowsList.remove(i);
@@ -119,7 +119,6 @@ public class IO {
             }
             System.out.printf("KCOL: %d, KROW: %d\n", kCol, kRow);
 
-            
             if (boardRows.length != a) {
                 throw new IllegalArgumentException("Number of rows (" + boardRows.length
                         + ") does not match the specified dimension (" + a + ").");
@@ -182,7 +181,7 @@ public class IO {
             } else if (kRowPosition == a) {
                 // K is on bottom border
                 if (kColPosition >= 0 && kColPosition < b) {
-                    grid[borderCol - 1][kColPosition + 1] = 'K';
+                    grid[borderRow - 1][kColPosition + 1] = 'K'; // <-- perbaiki di sini
                     System.out.println("Placed K on bottom border at column " + (kColPosition + 1));
                 } else {
                     throw new IllegalArgumentException(
@@ -195,7 +194,7 @@ public class IO {
             } else if (kColPosition == b - 1
                     || (kRowPosition < boardRows.length && kColPosition >= boardRows[kRowPosition].length())) {
                 // K is on right border (either at position b-1 or at the end of a shorter row)
-                grid[kRowPosition + 1][borderRow - 1] = 'K';
+                grid[kRowPosition + 1][borderCol - 1] = 'K';
                 System.out.println("Placed K on right border at row " + (kRowPosition + 1));
             } else {
                 // If K is not at the edge of the inner grid, we can't place it on a border
@@ -211,14 +210,14 @@ public class IO {
                 }
                 System.out.println();
             }
-            
+
             innerGrid = new char[a][b];
             for (int i = 0; i < a; i++) {
                 for (int j = 0; j < b; j++) {
                     innerGrid[i][j] = grid[i + 1][j + 1];
                 }
             }
-            
+
         } catch (Exception e) {
             System.err.println(e);
             throw new IOException("Failed to parse input: " + e.getMessage());
@@ -259,7 +258,7 @@ public class IO {
         outputPath = outputPath.concat(directoryPath);
 
         while (true) {
-            System.out.println("Save Hasil ke file?(Y/n)");
+            System.out.println("\nSave Hasil ke file?(Y/n)");
             char save = scanner.nextLine().charAt(0);
             if (save == 'Y' || save == 'y') {
                 System.out.println("Masukkan nama file e.g (output): ");

@@ -5,23 +5,13 @@ import java.util.*;
 
 public class UniformCostSearch {
   private PriorityQueue<State> queue;
-  private HashSet<Board> visited;
+  private HashSet<String> visited;
   private int nodesExpanded;
 
   public UniformCostSearch() {
     this.queue = new PriorityQueue<>();
     this.visited = new HashSet<>();
     this.nodesExpanded = 0;
-  }
-
-  private String boardToString(Board board) {
-    StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < board.getRows(); i++) {
-      for (int j = 0; j < board.getCols(); j++) {
-        sb.append(board.getCell(i, j));
-      }
-    }
-    return sb.toString();
   }
 
   public State solve(Board initialBoard) {
@@ -36,35 +26,46 @@ public class UniformCostSearch {
       State current = queue.poll();
       Board currentBoard = current.getBoard();
 
-      if (visited.contains(currentBoard)) {
-        continue;
-      }
-
-      visited.add(currentBoard);
-      nodesExpanded++;
-
-      if (current.isWin()&& current != null) {
+      if (current != null && current.isWin()) {
         return current;
       }
 
-      List<Move> possibleMoves = current.getBoard().getPossibleMoves();
+      String boardHash = currentBoard.toString();
+      if (visited.contains(boardHash)) {
+        continue;
+      }
+      visited.add(boardHash);
+      nodesExpanded++;
 
-      for (Move move : possibleMoves) {
+      for (Move move : current.getBoard().getPossibleMoves()) {
         Board newBoard = current.getBoard().copy();
-        newBoard.makeMove(move);
+        // Ambil piece dari board baru, bukan dari move lama
+        Piece movedPiece = newBoard.getPieces().get(String.valueOf(move.getPiece().getLetter()));
+        Move newMove = new Move(
+            movedPiece,
+            move.getStartX(),
+            move.getStartY(),
+            move.getDirection(),
+            move.getSteps());
+        newBoard.makeMove(newMove);
+
+        String newBoardHash = newBoard.toString();
+        if (visited.contains(newBoardHash)) {
+          continue;
+        }
 
         State newState = new State(
             newBoard,
             current.getCostSoFar() + 1,
             0,
             current,
-            move);
+            newMove);
 
         queue.add(newState);
       }
     }
 
-    return null;
+    return null; // No solution found
   }
 
   public int getNodesExpanded() {

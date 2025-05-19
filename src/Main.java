@@ -18,16 +18,14 @@ public class Main {
       System.out.println("\nInitial Board State:");
       initialBoard.printBoard();
 
-      
-      if(initialBoard.getPrimaryPiece().getOrientation() == 'H'){
-        if(initialBoard.getPrimaryPiece().getRow() != IO.getKRow()){
+      if (initialBoard.getPrimaryPiece().getOrientation() == 'H') {
+        if (initialBoard.getPrimaryPiece().getRow() != IO.getKRow()) {
           System.out.println("Unsolvable: Exit location and primary piece is not alligned");
           scanner.close();
           return;
         }
-      }
-      else{
-        if(initialBoard.getPrimaryPiece().getCol() != IO.getKCol()){
+      } else {
+        if (initialBoard.getPrimaryPiece().getCol() != IO.getKCol()) {
           System.out.println("Unsolvable: Exit location and primary piece is not alligned");
           scanner.close();
           return;
@@ -54,7 +52,7 @@ public class Main {
           break;
         case 3:
           solution = AStar.solve(initialBoard);
-            break;
+          break;
 
         default:
           System.out.println("Invalid choice");
