@@ -21,32 +21,24 @@ public class AStar {
             State current = openList.poll();
             statesExplored++;
 
-            int kCol = IO.getKCol();
-            int kRow = IO.getKRow();
-            Piece primaryPiece = current.getBoard().getPieces().get("P");
-            int pRowStart = primaryPiece.getRow();
-            int pColStart = primaryPiece.getCol();
-            int pRowEnd = pRowStart + (primaryPiece.isVertical() ? primaryPiece.getSize() - 1 : 0);
-            int pColEnd = pColStart + (primaryPiece.isHorizontal() ? primaryPiece.getSize() - 1 : 0);
-            current.getBoard().printBoard();
+            // int kCol = IO.getKCol();
+            // int kRow = IO.getKRow();
+            // Piece primaryPiece = current.getBoard().getPieces().get("P");
+            // int pRowStart = primaryPiece.getRow();
+            // int pColStart = primaryPiece.getCol();
+            // int pRowEnd = pRowStart + (primaryPiece.isVertical() ? primaryPiece.getSize() - 1 : 0);
+            // int pColEnd = pColStart + (primaryPiece.isHorizontal() ? primaryPiece.getSize() - 1 : 0);
+            // current.getBoard().printBoard();
 
-            System.out.printf(
-                    "States: %d, Primary Start Row/Col: (%d, %d), End Row/Col: (%d, %d), Exit Row/Col: (%d, %d)\n",
-                    statesExplored,
-                    pRowStart,
-                    pColStart,
-                    pRowEnd,
-                    pColEnd,
-                    kRow,
-                    kCol);
-
-            // Check if we've reached the goal state
-            if (statesExplored % 100 == 0) {
-                System.out.println("States explored: " + statesExplored);
-                System.out.println("\nCurrent f-value: " + current.getF());
-                // System.out.println();
-                // return current;
-            }
+            // System.out.printf(
+            //         "States: %d, Primary Start Row/Col: (%d, %d), End Row/Col: (%d, %d), Exit Row/Col: (%d, %d)\n",
+            //         statesExplored,
+            //         pRowStart,
+            //         pColStart,
+            //         pRowEnd,
+            //         pColEnd,
+            //         kRow,
+            //         kCol);
 
             if (current.isWin()) {
                 System.out.println("Solution found after exploring " + statesExplored + " states!");
@@ -67,8 +59,16 @@ public class AStar {
                 // Create a copy of the board and apply the move
                 Board nextBoard = current.getBoard().copy();
                 // nextBoard.printBoard();
+                Piece movedPiece = nextBoard.getPieces().get(String.valueOf(move.getPiece().getLetter()));
+
+                Move newMove = new Move(
+                    movedPiece,
+                    move.getStartX(),
+                    move.getStartY(),
+                    move.getDirection(),
+                    move.getSteps());
                 try {
-                    nextBoard.makeMove(move);
+                    nextBoard.makeMove(newMove);
 
                     // Create new state
                     int heuristic = Heuristic.pieceToDest(nextBoard);
