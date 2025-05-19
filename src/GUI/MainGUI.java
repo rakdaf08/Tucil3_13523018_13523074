@@ -22,6 +22,10 @@ public class MainGUI extends JFrame {
   private JButton prevButton;
   private static final int ANIMATION_DELAY = 500; // 1 second between states
 
+  public static void main(String[] args) {
+    SwingUtilities.invokeLater(MainGUI::new);
+  }
+
   public MainGUI() {
     setTitle("Rush Hour Solver");
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -72,10 +76,18 @@ public class MainGUI extends JFrame {
         statusLabel.setText("Board loaded: " + currentFile.getName());
         solveButton.setEnabled(true);
       } catch (Exception ex) {
-        statusLabel.setText("Failed to load board: " + ex.getMessage());
-        solveButton.setEnabled(false);
+        showErrorDialog(ex.getMessage());
       }
     }
+  }
+
+    private void showErrorDialog(String message) {
+      JOptionPane.showMessageDialog(
+          this,                           // Parent component
+          message,                        // Message text
+          "Error Loading Board",          // Dialog title
+          JOptionPane.ERROR_MESSAGE       // Message type
+      );
   }
 
   private void drawBoard() {
@@ -294,7 +306,5 @@ public class MainGUI extends JFrame {
   }
   
 
-  public static void main(String[] args) {
-    SwingUtilities.invokeLater(MainGUI::new);
-  }
+  
 }

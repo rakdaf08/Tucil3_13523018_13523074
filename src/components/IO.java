@@ -52,7 +52,17 @@ public class IO {
 
         return result;
     }
-
+    
+    private static int countOccurrences(String str, char ch) {
+    int count = 0;
+    for (int i = 0; i < str.length(); i++) {
+        if (str.charAt(i) == ch) {
+            count++;
+        }
+    }
+    return count;
+}
+    
     public static Board parseInput(String[] inputString) throws IOException {
         int a = 0, b = 0, n = 0;
         char[][] grid = null;
@@ -79,44 +89,64 @@ public class IO {
             for (String string : boardRows) {
                 System.out.println(string);
             }
-            boolean kOnTopOrBottom = false;
+            boolean kFound = false;
             int kRowPosition = -1; // -1 for top, a for bottom
             int kColPosition = -1;
-
-            for (int i = 0; i < boardRows.length; i++) {
-                String trimmedRow = boardRows[i].trim();
-                if (trimmedRow.equals("K")) {
-                    kOnTopOrBottom = true;
-                    int leadingSpaces = boardRows[i].indexOf('K');
-
-                    if (i == 0) {
-                        // K is at the top
-                        kRowPosition = -1; // Indicates top border
-                    } else if (i == boardRows.length - 1) {
-                        // K is at the bottom
-                        kRowPosition = a; // Indicates bottom border
-                    } else {
-                        throw new IllegalArgumentException("K row must be at top or bottom if separate.");
-                    }
-                    kColPosition = leadingSpaces;
-                    if (kRowPosition == -1) {
-                        // K is on top border
-                        kRow = 0;
-                        kCol = kColPosition;
-                    } else if (kRowPosition == a) {
-                        // K is on bottom border
-                        kRow = borderCol - 1;
-                        kCol = kColPosition;
-                    }
-                    System.out.println("Found K in separate row, position: " + kColPosition);
-
-                    // Remove this row from our array
-                    List<String> rowsList = new ArrayList<>(Arrays.asList(boardRows));
-                    rowsList.remove(i);
-                    boardRows = rowsList.toArray(new String[0]);
-                    break;
-                }
+            
+            int totalKCount = 0;
+            for (String row : boardRows) {
+                totalKCount += countOccurrences(row, 'K');
             }
+            
+            if (totalKCount > 1) {
+                throw new IllegalArgumentException("Multiple 'K' characters found in the grid.");
+            }
+            
+            /* Check if K is on Top */
+            if(boardRows[0].contains("K")){
+                if(kFound) throw new IllegalArgumentException("Multiple 'K' characters found in the grid.");
+                
+                kFound = true;
+                int leadingSpaces = boardRows[0].indexOf('K');
+                System.out.println("Board Rows: " + Arrays.toString(boardRows));
+                if (countOccurrences(boardRows[0], 'K') > 1) {
+                throw new IllegalArgumentException("The exit 'K' should be a single character, not a multi-character piece.");
+                }
+
+                kRowPosition = -1;
+                kColPosition = leadingSpaces;
+
+                kRow = 0;
+                kCol = kColPosition;
+                // Remove this row from our array
+                List<String> rowsList = new ArrayList<>(Arrays.asList(boardRows));
+                rowsList.remove(0);
+                boardRows = rowsList.toArray(new String[0]);
+            }
+
+            /* Check if K is on Bottom*/
+            if(boardRows[boardRows.length-1].contains("K")){
+                if(kFound) throw new IllegalArgumentException("Multiple 'K' characters found in the grid.");
+                
+                kFound = true;
+                int leadingSpaces = boardRows[boardRows.length-1].indexOf('K');
+                System.out.println("Board Rows: " + Arrays.toString(boardRows));
+                if (countOccurrences(boardRows[boardRows.length-1], 'K') > 1) {
+                throw new IllegalArgumentException("The exit 'K' should be a single character, not a multi-character piece.");
+                }
+                
+                kRowPosition = a;
+                kColPosition = leadingSpaces;
+                
+                kRow = borderCol - 1;
+                kCol = kColPosition;
+
+                // Remove this row from our array
+                List<String> rowsList = new ArrayList<>(Arrays.asList(boardRows));
+                rowsList.remove(boardRows.length-1);
+                boardRows = rowsList.toArray(new String[0]);
+            }
+            
             System.out.printf("KCOL: %d, KROW: %d\n", kCol, kRow);
 
             if (boardRows.length != a) {
@@ -136,25 +166,35 @@ public class IO {
                 }
             }
 
-            if (!kOnTopOrBottom) {
-                boolean kFound = false;
-                for (int i = 0; i < boardRows.length; i++) {
-                    int kIndex = boardRows[i].indexOf('K');
-                    if (kIndex != -1) {
-                        kRowPosition = i;
-                        kColPosition = kIndex;
-                        // Remove the K from the string
-                        kRow = kRowPosition;
-                        kCol = kColPosition;
-                        boardRows[i] = boardRows[i].substring(0, kIndex) + boardRows[i].substring(kIndex + 1);
-                        kFound = true;
-                        break;
+            
+            for (int i = 0; i < boardRows.length; i++) {
+                int kIndex = boardRows[i].indexOf('K');
+                if (kIndex != -1) {
+                    if(kFound) throw new IllegalArgumentException("Multiple 'K' characters found in the grid.");
+                    if (kIndex + 1 < boardRows[i].length() && boardRows[i].charAt(kIndex + 1) == 'K') {
+                        throw new IllegalArgumentException("The exit 'K' should be a single character, not a multi-character piece.");
+                        }
+                    
+                    // Check if this is part of a vertical multi-character piece
+                    if (i > 0 && kIndex < boardRows[i-1].length() && boardRows[i-1].charAt(kIndex) == 'K') {
+                        throw new IllegalArgumentException("The exit 'K' should be a single character, not a multi-character piece.");
                     }
+                    if (i < boardRows.length - 1 && kIndex < boardRows[i+1].length() && boardRows[i+1].charAt(kIndex) == 'K') {
+                        throw new IllegalArgumentException("The exit 'K' should be a single character, not a multi-character piece.");
+                    }
+                    kRowPosition = i;
+                    kColPosition = kIndex;
+                    // Remove the K from the string
+                    kRow = kRowPosition;
+                    kCol = kColPosition;
+                    boardRows[i] = boardRows[i].substring(0, kIndex) + boardRows[i].substring(kIndex + 1);
+                    kFound = true;
+                    break;
                 }
+            }
 
-                if (!kFound) {
-                    throw new IllegalArgumentException("No exit 'K' found in the grid.");
-                }
+            if (!kFound) {
+                throw new IllegalArgumentException("No exit 'K' found in the grid.");
             }
 
             // Fill the inner grid
@@ -219,7 +259,6 @@ public class IO {
             }
 
         } catch (Exception e) {
-            System.err.println(e);
             throw new IOException("Failed to parse input: " + e.getMessage());
         }
         System.out.printf("KCOL: %d, KROW: %d\n", IO.getKCol(), IO.getKRow());
