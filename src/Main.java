@@ -133,19 +133,20 @@ public class Main {
         solution.printState();
 
         // Save to file option
-        String[] output = new String[path.size() + 3];
-        output[0] = "Number of moves: " + path.size();
-        output[1] = "Time taken: " + (endTime - startTime) + "ms";
-        output[2] = "\nMoves:";
+        // String[] output = new String[path.size() + 3];
+        // output[0] = "Number of moves: " + path.size();
+        // output[1] = "Time taken: " + (endTime - startTime) + "ms";
+        // output[2] = "\nMoves:";
 
-        for (int i = 0; i < path.size(); i++) {
-          Move move = path.get(i);
-          output[i + 3] = String.format("%d. Move piece %c %s by %d steps",
-              i + 1,
-              move.getPiece().getLetter(),
-              move.getDirection(),
-              move.getSteps());
-        }
+        // for (int i = 0; i < path.size(); i++) {
+        //   Move move = path.get(i);
+        //   output[i + 3] = String.format("%d. Move piece %c %s by %d steps",
+        //       i + 1,
+        //       move.getPiece().getLetter(),
+        //       move.getDirection(),
+        //       move.getSteps());
+        // }
+        String[] output = solution.getSolutionPath(); 
 
         IO.saveOutputToFile(output, new ArrayList<>(initialBoard.getPieces().values()));
       } else {
