@@ -123,7 +123,7 @@ public class IO {
                 kRowPosition = -1;
                 kColPosition = leadingSpaces;
 
-                kRow = 0;
+                kRow = kRowPosition;
                 kCol = kColPosition;
                 // Remove this row from our array
                 List<String> rowsList = new ArrayList<>(Arrays.asList(boardRows));
@@ -145,7 +145,7 @@ public class IO {
                 kRowPosition = a;
                 kColPosition = leadingSpaces;
                 
-                kRow = borderCol - 1;
+                kRow = a;
                 kCol = kColPosition;
 
                 // Remove this row from our array

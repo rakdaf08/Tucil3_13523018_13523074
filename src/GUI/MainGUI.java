@@ -24,7 +24,6 @@ public class MainGUI extends JFrame {  private Board board;
   private JButton prevButton;
   private JList<String> movesList;
   private DefaultListModel<String> movesListModel;
-  private JLabel exitLocationLabel;
   private static final int ANIMATION_DELAY = 500; // 1 second between states
 
   public static void main(String[] args) {
@@ -119,10 +118,7 @@ public class MainGUI extends JFrame {  private Board board;
     JPanel statusPanel = new JPanel(new BorderLayout());
     statusLabel = new JLabel("Please load a board file.");
     statusLabel.setBorder(BorderFactory.createEmptyBorder(0,10,0,10));
-    exitLocationLabel = new JLabel("Exit location: Not loaded");
-    exitLocationLabel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
     statusPanel.add(statusLabel, BorderLayout.CENTER);
-    statusPanel.add(exitLocationLabel, BorderLayout.EAST);
     
     // Add status panel to the top of bottom panel
     bottomPanel.add(statusPanel, BorderLayout.NORTH);
@@ -175,7 +171,6 @@ public class MainGUI extends JFrame {  private Board board;
         String[] input = components.IO.readFile(currentFile.getPath());        board = components.IO.parseInput(input);
         drawBoard();
         statusLabel.setText("Board loaded: " + currentFile.getName());
-        updateExitLocationLabel();
         solveButton.setEnabled(true);
       } catch (Exception ex) {
         showErrorDialog(ex.getMessage());
@@ -371,7 +366,6 @@ public class MainGUI extends JFrame {  private Board board;
             }
             movesList.setSelectedIndex(0);
 
-            // Enable save Button
 
             // Enable animation controls
             prevButton.setEnabled(true);
@@ -494,26 +488,4 @@ public class MainGUI extends JFrame {  private Board board;
       statusLabel.setText("Move " + currentStateIndex + " of " + (solutionStates.size() - 1));
     }
   }
-
-  private void updateExitLocationLabel() {
-    int kRow = components.IO.getKRow();
-    int kCol = components.IO.getKCol();
-    int rows = board.getRows();
-    int cols = board.getCols();
-    
-    String location = "Exit (K) location: ";
-    if (kRow == -1) {
-        location += "Top border, column " + (kCol + 1);
-    } else if (kRow == rows) {
-        location += "Bottom border, column " + (kCol + 1);
-    } else if (kCol == -1) {
-        location += "Left border, row " + (kRow + 1);
-    } else if (kCol == cols) {
-        location += "Right border, row " + (kRow + 1);
-    } else {
-        location += "row " + (kRow + 1) + ", column " + (kCol + 1);
-    }
-    exitLocationLabel.setText(location);
-  }
-
 }
