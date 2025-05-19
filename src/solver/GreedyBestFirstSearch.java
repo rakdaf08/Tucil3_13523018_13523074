@@ -28,6 +28,8 @@ public class GreedyBestFirstSearch {
       visited.add(boardHash);
       nodesExpanded++;
 
+      System.out.println("Jumlah node:" + nodesExpanded);
+
       for (Move move : currentBoard.getPossibleMoves()) {
         Board newBoard = currentBoard.copy();
         Piece movedPiece = newBoard.getPieces().get(String.valueOf(move.getPiece().getLetter()));
