@@ -36,8 +36,9 @@ public class Main {
       // Choose search algorithm
       System.out.println("\nChoose search algorithm:");
       System.out.println("1. Uniform Cost Search");
-      System.out.println("2. Greedy Best First Search (Coming soon)");
-      System.out.println("3. A* Search (Coming soon)");
+      System.out.println("2. Greedy Best First Search");
+      System.out.println("3. A*");
+      System.out.println("4. Iterative Deepening Depth First Search");
       System.out.print("Enter choice (1-3): ");
 
       int choice = scanner.nextInt();
@@ -55,6 +56,10 @@ public class Main {
           break;
         case 3:
           solution = AStar.solve(initialBoard);
+          break;
+        case 4:
+          // IterativeDeepeningSearch idfs = new IterativeDeepeningSearch();
+          // solution = idfs.solve(initialBoard);
           break;
 
         default:
