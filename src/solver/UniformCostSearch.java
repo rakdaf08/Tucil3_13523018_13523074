@@ -39,7 +39,6 @@ public class UniformCostSearch {
 
       for (Move move : current.getBoard().getPossibleMoves()) {
         Board newBoard = current.getBoard().copy();
-        // Ambil piece dari board baru, bukan dari move lama
         Piece movedPiece = newBoard.getPieces().get(String.valueOf(move.getPiece().getLetter()));
         Move newMove = new Move(
             movedPiece,
