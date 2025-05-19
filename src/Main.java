@@ -17,6 +17,7 @@ public class Main {
       // Print initial board state
       System.out.println("\nInitial Board State:");
       initialBoard.printBoard();
+      System.out.printf("Primary Col: %d, KCol: %d\n", initialBoard.getPrimaryPiece().getCol(), IO.getKCol());
 
       if (initialBoard.getPrimaryPiece().getOrientation() == 'H') {
         if (initialBoard.getPrimaryPiece().getRow() != IO.getKRow()) {

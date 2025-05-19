@@ -37,17 +37,21 @@ public class Board {
   private void initializePieces() {
     boolean[][] visited = new boolean[rows][cols];
 
-    for (int i = 0; i < rows; i++) {
-      for (int j = 0; j < cols; j++) {
-        char cell = grid[i][j];
-        if (!visited[i][j] && cell != '.' && cell != 'K' && cell != '-' && cell != '|') {
-          Piece piece = Piece.pieceFromBoard(cell, j, i, this);
-          if (piece != null) {
-            pieces.put(String.valueOf(cell), piece);
-            markVisited(piece, visited);
+    try{
+      for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+          char cell = grid[i][j];
+          if (!visited[i][j] && cell != '.' && cell != 'K' && cell != '-' && cell != '|') {
+            Piece piece = Piece.pieceFromBoard(cell, j, i, this);
+            if (piece != null) {
+              pieces.put(String.valueOf(cell), piece);
+              markVisited(piece, visited);
+            }
           }
         }
       }
+    }catch(Exception e){
+      System.err.println(e);
     }
   }
 
@@ -58,15 +62,11 @@ public class Board {
           visited[piece.row][j] = true;
         }
       }
-    } else if (piece.orientation == 'V') {
+    } else{
       for (int i = piece.row; i < piece.row + piece.size; i++) {
         if (isValidPosition(i, piece.col)) {
           visited[i][piece.col] = true;
         }
-      }
-    } else if (piece.orientation == 'S') {
-      if (isValidPosition(piece.row, piece.col)) {
-        visited[piece.row][piece.col] = true;
       }
     }
   }
@@ -277,7 +277,7 @@ public class Board {
     return this.pieces;
   }
 
-  public Piece getPrimaryPiece() {
+  public Piece  getPrimaryPiece() {
     return pieces.get("P");
   }
 
