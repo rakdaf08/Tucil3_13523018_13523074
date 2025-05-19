@@ -12,6 +12,7 @@ public class MainGUI extends JFrame {
   private JPanel boardPanel;
   private JLabel statusLabel;
   private JComboBox<String> algoBox;
+  private JComboBox<String> heuristicBox;
   private JButton solveButton, loadButton;
   private File currentFile;
   private Timer animationTimer;
@@ -37,10 +38,28 @@ public class MainGUI extends JFrame {
     loadButton.addActionListener(e -> loadBoard());
     topPanel.add(loadButton);
 
+    // Algorithm Selection
     algoBox = new JComboBox<>(new String[] {
         "Uniform Cost Search", "Greedy Best First Search", "A*", "Iterative Deepening DFS"
     });
     topPanel.add(algoBox);
+
+     // Heuristic Selection
+    heuristicBox = new JComboBox<>(new String[] {
+        "Jarak Piece ke K", "Jumlah Piece Penghalang", "Gabungan Dua Heuristic"
+    });
+    heuristicBox.setEnabled(false); // Disabled by default
+    topPanel.add(heuristicBox);
+    
+    // Enable heuristicBox only for GBFS and A*
+    algoBox.addActionListener(e -> {
+        String selectedAlgo = (String) algoBox.getSelectedItem();
+        if (selectedAlgo.equals("Greedy Best First Search") || selectedAlgo.equals("A*")) {
+            heuristicBox.setEnabled(true);
+        } else {
+            heuristicBox.setEnabled(false);
+        }
+    });
 
     solveButton = new JButton("Solve");
     solveButton.addActionListener(e -> solveBoard());
@@ -187,11 +206,11 @@ public class MainGUI extends JFrame {
               break;
             case "Greedy Best First Search":
               System.out.println("Starting GBFS...");
-              solution = new GreedyBestFirstSearch().solve(board.copy(), "pieceToDest");
+              solution = new GreedyBestFirstSearch().solve(board.copy(), heuristicBox.getSelectedItem().toString());
               break;
             case "A*":
               System.out.println("Starting A*...");
-              solution = AStar.solve(board.copy(), "pieceToDest");
+              solution = AStar.solve(board.copy(), heuristicBox.getSelectedItem().toString());
               break;
             case "Iterative Deepening DFS":
               System.out.println("Starting IDDFS...");
