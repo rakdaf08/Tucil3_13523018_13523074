@@ -436,6 +436,44 @@ public class MainGUI extends JFrame {  private Board board;
     if (solutionStates != null && currentStateIndex < solutionStates.size() - 1) {
       currentStateIndex++;
       updateBoardDisplay();
+      
+      // Check if P is at exit position in final state
+      char[][] grid = board.getGrid();
+      if (currentStateIndex == solutionStates.size() - 1) {
+        int kRow = components.IO.getKRow();
+        int kCol = components.IO.getKCol();
+        int rows = board.getRows();
+        int cols = board.getCols();
+        
+        boolean atExit = false;
+        if (kRow == -1 && kCol >= 0 && kCol < cols && grid[0][kCol] == 'P') atExit = true;
+        else if (kRow == rows && kCol >= 0 && kCol < cols && grid[rows-1][kCol] == 'P') atExit = true;
+        else if (kCol == -1 && kRow >= 0 && kRow < rows && grid[kRow][0] == 'P') atExit = true;
+        else if (kCol == cols && kRow >= 0 && kRow < rows && grid[kRow][cols-1] == 'P') atExit = true;
+        
+        if (atExit) {
+          animationTimer.stop();
+          
+          // Add a delay before removing P
+          Timer exitTimer = new Timer(ANIMATION_DELAY, e -> {
+            // Remove P piece from board
+            for (int i = 0; i < grid.length; i++) {
+              for (int j = 0; j < grid[0].length; j++) {
+                if (grid[i][j] == 'P') {
+                  grid[i][j] = '.';
+                  drawBoard();
+                  statusLabel.setText("Puzzle solved! The red piece has escaped!");
+                  playButton.setText("▶");
+                  break;
+                }
+              }
+            }
+            ((Timer)e.getSource()).stop();
+          });
+          exitTimer.setRepeats(false);
+          exitTimer.start();
+        }
+      }
     } else {
       animationTimer.stop();
       playButton.setText("▶");
@@ -478,4 +516,4 @@ public class MainGUI extends JFrame {  private Board board;
     exitLocationLabel.setText(location);
   }
 
-  }
+}
