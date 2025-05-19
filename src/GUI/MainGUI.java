@@ -10,8 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class MainGUI extends JFrame {
-  private Board board;
+public class MainGUI extends JFrame {  private Board board;
   private JPanel boardPanel;
   private JLabel statusLabel;
   private JComboBox<String> algoBox;
@@ -24,6 +23,8 @@ public class MainGUI extends JFrame {
   private JButton playButton;
   private JButton nextButton;
   private JButton prevButton;
+  private JList<String> movesList;
+  private DefaultListModel<String> movesListModel;
   private static final int ANIMATION_DELAY = 500; // 1 second between states
 
   public static void main(String[] args) {
@@ -75,10 +76,43 @@ public class MainGUI extends JFrame {
     topPanel.add(solveButton);
 
 
-    add(topPanel, BorderLayout.NORTH);
-
-    boardPanel = new JPanel();
-    add(boardPanel, BorderLayout.CENTER);
+    add(topPanel, BorderLayout.NORTH);    boardPanel = new JPanel();
+    add(boardPanel, BorderLayout.CENTER);    // Create center panel to hold board and moves list
+    JPanel centerPanel = new JPanel(new BorderLayout());
+    
+    // Create a wrapper panel for the board to maintain square ratio
+    JPanel boardWrapper = new JPanel(new GridBagLayout());
+    boardWrapper.add(boardPanel);
+    centerPanel.add(boardWrapper, BorderLayout.CENTER);
+    
+    // Create moves list sidebar with custom rendering
+    movesListModel = new DefaultListModel<>();
+    movesList = new JList<>(movesListModel);
+    movesList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+    movesList.setCellRenderer(new DefaultListCellRenderer() {
+        @Override
+        public Component getListCellRendererComponent(JList<?> list, Object value, 
+                int index, boolean isSelected, boolean cellHasFocus) {
+            JLabel label = (JLabel) super.getListCellRendererComponent(
+                list, value, index, isSelected, cellHasFocus);
+            label.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+            return label;
+        }
+    });
+    movesList.addListSelectionListener(e -> {
+        if (!e.getValueIsAdjusting() && movesList.getSelectedIndex() != -1) {
+            currentStateIndex = movesList.getSelectedIndex();
+            updateBoardDisplay();
+            movesList.ensureIndexIsVisible(currentStateIndex);
+        }
+    });
+    
+    // Add scrolling to the moves list
+    JScrollPane scrollPane = new JScrollPane(movesList);
+    scrollPane.setPreferredSize(new Dimension(250, 0));
+    centerPanel.add(scrollPane, BorderLayout.EAST);
+    
+    add(centerPanel, BorderLayout.CENTER);
 
     statusLabel = new JLabel("Please load a board file.");
     add(statusLabel, BorderLayout.SOUTH);
@@ -143,7 +177,6 @@ public class MainGUI extends JFrame {
           JOptionPane.ERROR_MESSAGE       // Message type
       );
   }
-
   private void drawBoard() {
     boardPanel.removeAll();
     if (board == null) {
@@ -155,6 +188,12 @@ public class MainGUI extends JFrame {
     int rows = board.getRows();
     int cols = board.getCols();
     boardPanel.setLayout(new GridLayout(rows, cols));
+    
+    // Calculate the size to maintain square cells
+    int size = Math.min(getHeight() - 150, getWidth() - 300); // Account for controls and moves list
+    size = Math.min(size, Math.min(600, Math.max(300, size))); // Set min/max bounds
+    boardPanel.setPreferredSize(new Dimension(size, size));
+    
     char[][] grid = board.getGrid();
 
     for (int i = 0; i < rows; i++) {
@@ -204,11 +243,10 @@ public class MainGUI extends JFrame {
     playButton.setText("▶");
     prevButton.setEnabled(false);
     playButton.setEnabled(false);
-    nextButton.setEnabled(false);
-
-    // Reset solution states
+    nextButton.setEnabled(false);    // Reset solution states
     solutionStates = null;
     currentStateIndex = 0;
+    movesListModel.clear();
 
     // Reset board to initial state
     try {
@@ -283,10 +321,20 @@ public class MainGUI extends JFrame {
             while (current != null) {
               solutionStates.add(0, current);
               current = current.getParent();
+            }            currentStateIndex = 0;
+            statusLabel.setText("Solution found! " + (solutionStates.size() - 1) + " moves");            // Populate moves list
+            movesListModel.clear();
+            movesListModel.addElement("Step 0: Initial State");
+            List<Move> moves = solution.getPathFromRoot();
+            for (int i = 0; i < moves.size(); i++) {
+                Move move = moves.get(i);
+                String direction = move.getDirection();
+                char piece = move.getPiece().getLetter();
+                int steps = move.getSteps();
+                movesListModel.addElement(String.format("Step %d: Move %c %s by %d", 
+                    i + 1, piece, direction, steps));
             }
-
-            currentStateIndex = 0;
-            statusLabel.setText("Solution found! " + (solutionStates.size() - 1) + " moves");
+            movesList.setSelectedIndex(0);
 
             // Enable save Button
 
