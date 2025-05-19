@@ -77,7 +77,27 @@ public class Main {
           solution = gbfs.solve(initialBoard, heuristicType);
           break;
         case 3:
-          solution = AStar.solve(initialBoard);
+        System.out.println("Choose heuristic:");
+          System.out.println("1. Jarak Piece ke K");
+          System.out.println("2. Jumlah Piece Penghalang");
+          System.out.println("3. Gabungan Dua Heuristic");
+          System.out.print("Enter heuristic (1-3): ");
+          hChoice = scanner.nextInt();
+          scanner.nextLine();
+
+          if (hChoice < 1 || hChoice > 3) {
+            System.out.println("Invalid heuristic choice, using default.");
+            heuristicType = "pieceToDest";
+          }
+
+          if (hChoice == 1) {
+            heuristicType = "pieceToDest";
+          } else if (hChoice == 2) {
+            heuristicType = "countBlockingPieces";
+          } else {
+            heuristicType = "combineTwo";
+          }
+          solution = AStar.solve(initialBoard, heuristicType);
           break;
         case 4:
           // IterativeDeepeningSearch idfs = new IterativeDeepeningSearch();

@@ -5,11 +5,11 @@ import components.*;
 
 public class AStar {
 
-    public static State solve(Board initialBoard) {
+    public static State solve(Board initialBoard, String heuristicType) {
         PriorityQueue<State> openList = new PriorityQueue<>(Comparator.comparingInt(State::getHeuristic));
         Set<String> closedList = new HashSet<>();
 
-        int initialHeuristic = Heuristic.pieceToDest(initialBoard);
+        int initialHeuristic = Heuristic.getHeuristic(initialBoard, heuristicType);
         State initialState = new State(initialBoard, 0, initialHeuristic, null, null);
         openList.add(initialState);
         int statesExplored = 0;
@@ -67,7 +67,7 @@ public class AStar {
                     nextBoard.makeMove(newMove);
 
                     // Create new state
-                    int heuristic = Heuristic.pieceToDest(nextBoard);
+                    int heuristic = Heuristic.getHeuristic(nextBoard, heuristicType);
                     State nextState = new State(nextBoard, current.getCostSoFar() + 1, heuristic, current, move);
 
                     // If this board hasn't been explored yet, add it to the open list
