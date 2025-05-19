@@ -6,18 +6,15 @@ import components.*;
 public class AStar {
 
     public static State solve(Board initialBoard) {
-        // Priority queue for A* algorithm
-        PriorityQueue<State> openList = new PriorityQueue<>();
+        PriorityQueue<State> openList = new PriorityQueue<>(Comparator.comparingInt(State::getHeuristic));
         Set<String> closedList = new HashSet<>();
 
-        // Start with the initial state
         int initialHeuristic = Heuristic.pieceToDest(initialBoard);
         State initialState = new State(initialBoard, 0, initialHeuristic, null, null);
         openList.add(initialState);
         int statesExplored = 0;
 
         while (!openList.isEmpty()) {
-            // Get the state with the lowest f value
             State current = openList.poll();
             statesExplored++;
 
@@ -46,7 +43,6 @@ public class AStar {
                 return current;
             }
 
-            // Add current state to closed list to avoid revisiting
             String boardHash = current.getBoard().toString();
             if (closedList.contains(boardHash)) {
                 continue;
@@ -62,11 +58,11 @@ public class AStar {
                 Piece movedPiece = nextBoard.getPieces().get(String.valueOf(move.getPiece().getLetter()));
 
                 Move newMove = new Move(
-                    movedPiece,
-                    move.getStartX(),
-                    move.getStartY(),
-                    move.getDirection(),
-                    move.getSteps());
+                        movedPiece,
+                        move.getStartX(),
+                        move.getStartY(),
+                        move.getDirection(),
+                        move.getSteps());
                 try {
                     nextBoard.makeMove(newMove);
 

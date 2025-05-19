@@ -4,12 +4,12 @@ import components.*;
 import java.util.*;
 
 public class GreedyBestFirstSearch {
-  public State solve(Board initialBoard) {
+  public State solve(Board initialBoard, String type) {
     PriorityQueue<State> queue = new PriorityQueue<>(Comparator.comparingInt(State::getHeuristic));
     HashSet<String> visited = new HashSet<>();
     int nodesExpanded = 0;
 
-    int initialHeuristic = Heuristic.pieceToDest(initialBoard);
+    int initialHeuristic = Heuristic.getHeuristic(initialBoard, type);
     State initialState = new State(initialBoard, 0, initialHeuristic, null, null);
     queue.add(initialState);
 
@@ -44,7 +44,7 @@ public class GreedyBestFirstSearch {
           continue;
         }
 
-        int heuristic = Heuristic.pieceToDest(newBoard);
+        int heuristic = Heuristic.getHeuristic(newBoard, type);
         State newState = new State(
             newBoard,
             current.getCostSoFar() + 1,
