@@ -20,19 +20,17 @@ public class Heuristic {
       distance = Math.abs(exitRow - pieceEndRow);
     }
 
-    // Add blocking pieces penalty
-    int blockingPieces = countBlockingPieces(board, primary, exitRow, exitCol);
-
-    return distance + blockingPieces;
+    return distance;
   }
 
-  private static int countBlockingPieces(Board board, Piece primary, int exitRow, int exitCol) {
+  public static int countBlockingPieces(Board board) {
     int count = 0;
 
+    Piece primary = board.getPieces().get("P");
     if (primary.getOrientation() == 'H') {
       int row = primary.getRow();
       int startCol = primary.getCol() + primary.getSize();
-      for (int col = startCol; col <= exitCol; col++) {
+      for (int col = startCol; col <= IO.getKCol(); col++) {
         if (board.getCell(row, col) != '.' && board.getCell(row, col) != 'K') {
           count++;
         }
@@ -40,7 +38,7 @@ public class Heuristic {
     } else {
       int col = primary.getCol();
       int startRow = primary.getRow() + primary.getSize();
-      for (int row = startRow; row <= exitRow; row++) {
+      for (int row = startRow; row <= IO.getKRow(); row++) {
         if (board.getCell(row, col) != '.' && board.getCell(row, col) != 'K') {
           count++;
         }
@@ -48,5 +46,14 @@ public class Heuristic {
     }
 
     return count;
+  }
+
+  public static int getHeuristic(Board board, String heuristicType) {
+    if ("countBlockingPieces".equalsIgnoreCase(heuristicType)) {
+      return countBlockingPieces(board);
+    } else {
+      // Default: pieceToDest
+      return pieceToDest(board);
+    }
   }
 }

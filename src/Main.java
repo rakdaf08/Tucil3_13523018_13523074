@@ -35,8 +35,8 @@ public class Main {
       // Choose search algorithm
       System.out.println("\nChoose search algorithm:");
       System.out.println("1. Uniform Cost Search");
-      System.out.println("2. Greedy Best First Search (Coming soon)");
-      System.out.println("3. A* Search (Coming soon)");
+      System.out.println("2. Greedy Best First Search");
+      System.out.println("3. A* Search");
       System.out.print("Enter choice (1-3): ");
 
       int choice = scanner.nextInt();
@@ -49,8 +49,17 @@ public class Main {
           solution = ucs.solve(initialBoard);
           break;
         case 2:
+          System.out.println("Choose heuristic:");
+          System.out.println("1. Jarak Piece ke K");
+          System.out.println("2. Jumlah Piece Penghalang");
+          System.out.print("Enter heuristic (1-2): ");
+          int hChoice = scanner.nextInt();
+          scanner.nextLine();
+
+          String heuristicType = (hChoice == 2) ? "countBlockingPieces" : "pieceToDest";
+
           GreedyBestFirstSearch gbfs = new GreedyBestFirstSearch();
-          solution = gbfs.solve(initialBoard);
+          solution = gbfs.solve(initialBoard, heuristicType);
           break;
         case 3:
           solution = AStar.solve(initialBoard);

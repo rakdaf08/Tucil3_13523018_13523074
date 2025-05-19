@@ -9,7 +9,7 @@ public class UniformCostSearch {
   private int nodesExpanded;
 
   public UniformCostSearch() {
-    this.queue = new PriorityQueue<>();
+    this.queue = new PriorityQueue<>(Comparator.comparingInt(State::getCostSoFar));
     this.visited = new HashSet<>();
     this.nodesExpanded = 0;
   }
