@@ -14,7 +14,7 @@ public class UniformCostSearch {
     this.nodesExpanded = 0;
   }
 
-  public State solve(Board initialBoard) {
+  public State solve(Board initialBoard) throws Exception {
     queue.clear();
     visited.clear();
     nodesExpanded = 0;

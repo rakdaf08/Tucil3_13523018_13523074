@@ -8,8 +8,12 @@ public class IO {
     private static int kCol;
     private static int gridRow;
     private static int gridCol;
+    private static int a;
+    private static int b;
+    private static int n;
 
-    public static String[] readFile(String filepath) throws FileNotFoundException {
+
+    public static String[] readFile(String filepath) throws Exception {
         File file = new File(filepath);
         Scanner scanner = new Scanner(file);
         String size = "";
@@ -21,6 +25,10 @@ public class IO {
                 size = scanner.nextLine();
                 if (scanner.hasNextLine()) {
                     N = scanner.nextLine();
+                    if(Integer.parseInt(N) >= 25){
+                        scanner.close();
+                        throw new Exception("Number of piece cannot exceed 25");
+                    }
                 } else {
                     scanner.close();
                     throw new Exception("No N value found.");
@@ -37,7 +45,7 @@ public class IO {
                 }
             }
         } catch (Exception e) {
-            System.err.println("Error: " + e);
+            throw e;
         }
 
         scanner.close();
@@ -63,8 +71,7 @@ public class IO {
     return count;
 }
     
-    public static Board parseInput(String[] inputString) throws IOException {
-        int a = 0, b = 0, n = 0;
+    public static Board parseInput(String[] inputString) throws Exception {
         char[][] grid = null;
         char[][] innerGrid = null;
         try {
@@ -352,5 +359,53 @@ public class IO {
 
     public static int getGridCol() {
         return gridCol;
+    }
+
+    public static int getkRow() {
+        return kRow;
+    }
+
+    public static void setkRow(int kRow) {
+        IO.kRow = kRow;
+    }
+
+    public static int getkCol() {
+        return kCol;
+    }
+
+    public static void setkCol(int kCol) {
+        IO.kCol = kCol;
+    }
+
+    public static void setGridRow(int gridRow) {
+        IO.gridRow = gridRow;
+    }
+
+    public static void setGridCol(int gridCol) {
+        IO.gridCol = gridCol;
+    }
+
+    public static int getA() {
+        return a;
+    }
+
+    public static void setA(int a) {
+        IO.a = a;
+    }
+
+    public static int getB() {
+        return b;
+    }
+
+    public static void setB(int b) {
+        IO.b = b;
+    }
+
+    public static int getN() {
+        return n;
+    }
+
+    public static void setN(int n) {
+        IO.n = n;
     }
 }

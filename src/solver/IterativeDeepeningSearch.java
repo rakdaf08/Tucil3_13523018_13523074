@@ -10,7 +10,7 @@ public class IterativeDeepeningSearch {
     this.nodesExpanded = 0;
   }
 
-  public State solve(Board initialBoard) {
+  public State solve(Board initialBoard) throws Exception {
     int maxDepth = 0;
     
     while (true) {
@@ -25,7 +25,7 @@ public class IterativeDeepeningSearch {
     }
   }
 
-  private State depthLimitedSearch(State current, int depthLimit) {
+  private State depthLimitedSearch(State current, int depthLimit) throws Exception {
     Stack<State> stack = new Stack<>();
     Set<String> visited = new HashSet<>();
     stack.push(current);

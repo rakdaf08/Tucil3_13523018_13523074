@@ -4,7 +4,7 @@ import components.*;
 import java.util.*;
 
 public class GreedyBestFirstSearch {
-  public State solve(Board initialBoard, String type) {
+  public State solve(Board initialBoard, String type) throws Exception {
     PriorityQueue<State> queue = new PriorityQueue<>(Comparator.comparingInt(State::getHeuristic));
     HashSet<String> visited = new HashSet<>();
     int nodesExpanded = 0;

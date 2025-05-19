@@ -14,7 +14,7 @@ public class Board {
     System.out.println(pieces);
   }
 
-  public Board(char[][] grid) {
+  public Board(char[][] grid) throws Exception {
     if (grid == null || grid.length == 0 || grid[0].length == 0) {
       throw new IllegalArgumentException("Invalid grid dimensions");
     }
@@ -23,7 +23,12 @@ public class Board {
     this.rows = grid.length;
     this.cols = grid[0].length;
     this.pieces = new HashMap<>();
-    initializePieces();
+    try{
+      initializePieces();
+    }
+    catch(Exception e){
+      throw e;
+    }
   }
 
   public void printBoard() {
@@ -34,7 +39,7 @@ public class Board {
     System.out.println("\n" + pieces.keySet());
   }
 
-  private void initializePieces() {
+  private void initializePieces() throws Exception {
     boolean[][] visited = new boolean[rows][cols];
 
     try{
@@ -50,8 +55,11 @@ public class Board {
           }
         }
       }
+      if(pieces.size() - 1 != IO.getN()){
+        throw new Exception("Number of piece didnt match N");
+      }
     }catch(Exception e){
-      System.err.println(e);
+      throw e;
     }
   }
 
@@ -75,7 +83,7 @@ public class Board {
     return row >= 0 && row < rows && col >= 0 && col < cols;
   }
 
-  public Board copy() {
+  public Board copy() throws Exception {
     char[][] newGrid = new char[rows][cols];
     for (int i = 0; i < rows; i++) {
       System.arraycopy(grid[i], 0, newGrid[i], 0, cols);
