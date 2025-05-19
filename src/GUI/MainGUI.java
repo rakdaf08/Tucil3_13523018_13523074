@@ -130,6 +130,30 @@ public class MainGUI extends JFrame {
       statusLabel.setText("No board loaded.");
       return;
     }
+
+    // Reset animation state
+    if (animationTimer.isRunning()) {
+      animationTimer.stop();
+    }
+    playButton.setText("▶");
+    prevButton.setEnabled(false);
+    playButton.setEnabled(false);
+    nextButton.setEnabled(false);
+
+    // Reset solution states
+    solutionStates = null;
+    currentStateIndex = 0;
+
+    // Reset board to initial state
+    try {
+      String[] input = components.IO.readFile(currentFile.getPath());
+      board = components.IO.parseInput(input);
+      drawBoard();
+    } catch (Exception ex) {
+      statusLabel.setText("Failed to reset board: " + ex.getMessage());
+      return;
+    }
+    
     System.out.println("Starting solve process...");
     statusLabel.setText("Solving...");
     solveButton.setEnabled(false);
@@ -268,6 +292,7 @@ public class MainGUI extends JFrame {
       statusLabel.setText("Move " + currentStateIndex + " of " + (solutionStates.size() - 1));
     }
   }
+  
 
   public static void main(String[] args) {
     SwingUtilities.invokeLater(MainGUI::new);
