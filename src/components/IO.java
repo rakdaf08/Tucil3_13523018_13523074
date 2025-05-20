@@ -192,7 +192,11 @@ public class IO {
                     kRowPosition = i;
                     kColPosition = kIndex;
                     kRow = kRowPosition;
-                    kCol = kColPosition;
+                    if(kIndex == 0){
+                        kCol = -1;
+                    }else{
+                        kCol = kColPosition;
+                    }
                     boardRows[i] = boardRows[i].substring(0, kIndex) + boardRows[i].substring(kIndex + 1);
                     kFound = true;
                     break;
