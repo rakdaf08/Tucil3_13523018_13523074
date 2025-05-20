@@ -1,14 +1,14 @@
 ==================================================
            RUSH HOUR PUZZLE SOLUTION
 ==================================================
-Algorithm      : Iterative Deepening DFS
-Heuristic      : -
-Nodes Visited  : 367
-Time Taken     : 15 ms
+Algorithm      : A*
+Heuristic      : Count Blocking Pieces
+Nodes Visited  : 19
+Time Taken     : 10 ms
 ==================================================
 
 1. Initial State
-Heuristic: 0
+Heuristic: 3
 Board:
 AAB..F
 ..BCDF
@@ -18,7 +18,7 @@ GZJ...
 LLJMM.
 
 2. Move piece C UP by 1 steps
-Heuristic: 0
+Heuristic: 2
 Board:
 AABC.F
 ..BCDF
@@ -27,63 +27,43 @@ GZ.III
 GZJ...
 LLJMM.
 
-3. Move piece P RIGHT by 1 steps
-Heuristic: 0
+3. Move piece D UP by 1 steps
+Heuristic: 1
 Board:
-AABC.F
+AABCDF
 ..BCDF
-G.PPDF
+GPP..F
 GZ.III
 GZJ...
 LLJMM.
 
-4. Move piece Z UP by 2 steps
-Heuristic: 0
+4. Move piece I LEFT by 1 steps
+Heuristic: 1
 Board:
-AABC.F
-.ZBCDF
-GZPPDF
-G..III
-G.J...
+AABCDF
+..BCDF
+GPP..F
+GZIII.
+GZJ...
 LLJMM.
 
-5. Move piece I LEFT by 2 steps
+5. Move piece F DOWN by 3 steps
 Heuristic: 0
 Board:
-AABC.F
-.ZBCDF
-GZPPDF
-GIII..
-G.J...
-LLJMM.
-
-6. Move piece F DOWN by 3 steps
-Heuristic: 0
-Board:
-AABC..
-.ZBCD.
-GZPPD.
-GIII.F
-G.J..F
+AABCD.
+..BCD.
+GPP...
+GZIIIF
+GZJ..F
 LLJMMF
 
-7. Move piece D DOWN by 2 steps
+6. Move piece P RIGHT by 3 steps
 Heuristic: 0
 Board:
-AABC..
-.ZBC..
-GZPP..
-GIIIDF
-G.J.DF
-LLJMMF
-
-8. Move piece P RIGHT by 2 steps
-Heuristic: 0
-Board:
-AABC..
-.ZBC..
-GZ....
-GIIIDF
-G.J.DF
+AABCD.
+..BCD.
+G.....
+GZIIIF
+GZJ..F
 LLJMMF
 

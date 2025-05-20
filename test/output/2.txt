@@ -1,11 +1,14 @@
-Solve with: Uniform Cost Search
-Heuristic Type: pieceToDest
-Total Node Visited: 80
-Total Execution Time: 47
+==================================================
+           RUSH HOUR PUZZLE SOLUTION
+==================================================
+Algorithm      : Greedy Best First Search
+Heuristic      : Count Blocking Pieces
+Nodes Visited  : 12
+Time Taken     : 0 ms
+==================================================
 
-
-1. Move: Initial State
-Heuristic: 0
+1. Initial State
+Heuristic: 1
 Board:
 AAB..F
 ..BCDF
@@ -14,53 +17,73 @@ GZ.III
 GZJ...
 LLJMM.
 
-2. Move: Move piece D UP by 1 steps
-Heuristic: 0
+2. Move piece M RIGHT by 1 steps
+Heuristic: 1
 Board:
-AAB.DF
+AAB..F
 ..BCDF
-GPPC.F
+GPPCDF
 GZ.III
 GZJ...
-LLJMM.
+LLJ.MM
 
-3. Move: Move piece I LEFT by 1 steps
-Heuristic: 0
+3. Move piece J UP by 1 steps
+Heuristic: 1
 Board:
-AAB.DF
+AAB..F
 ..BCDF
-GPPC.F
-GZIII.
+GPPCDF
+GZJIII
 GZJ...
-LLJMM.
+LL..MM
 
-4. Move: Move piece C UP by 1 steps
-Heuristic: 0
+4. Move piece M LEFT by 2 steps
+Heuristic: 1
 Board:
-AABCDF
+AAB..F
 ..BCDF
-GPP..F
-GZIII.
+GPPCDF
+GZJIII
 GZJ...
-LLJMM.
+LLMM..
 
-5. Move: Move piece F DOWN by 3 steps
+5. Move piece M RIGHT by 1 steps
+Heuristic: 1
+Board:
+AAB..F
+..BCDF
+GPPCDF
+GZJIII
+GZJ...
+LL.MM.
+
+6. Move piece L RIGHT by 1 steps
+Heuristic: 1
+Board:
+AAB..F
+..BCDF
+GPPCDF
+GZJIII
+GZJ...
+.LLMM.
+
+7. Move piece G DOWN by 1 steps
 Heuristic: 0
 Board:
-AABCD.
-..BCD.
-GPP...
-GZIIIF
-GZJ..F
-LLJMMF
+AAB..F
+..BCDF
+.PPCDF
+GZJIII
+GZJ...
+GLLMM.
 
-6. Move: Move piece P RIGHT by 3 steps
+8. Move piece P LEFT by 1 steps
 Heuristic: 0
 Board:
-AABCD.
-..BCD.
-G.....
-GZIIIF
-GZJ..F
-LLJMMF
+AAB..F
+..BCDF
+...CDF
+GZJIII
+GZJ...
+GLLMM.
 

@@ -1,4 +1,13 @@
-1. Move: Initial State
+==================================================
+           RUSH HOUR PUZZLE SOLUTION
+==================================================
+Algorithm      : Uniform Cost Search
+Heuristic      : -
+Nodes Visited  : 80
+Time Taken     : 17 ms
+==================================================
+
+1. Initial State
 Heuristic: 0
 Board:
 AAB..F
@@ -8,7 +17,7 @@ GZ.III
 GZJ...
 LLJMM.
 
-2. Move: Move piece D UP by 1 steps
+2. Move piece D UP by 1 steps
 Heuristic: 0
 Board:
 AAB.DF
@@ -18,7 +27,7 @@ GZ.III
 GZJ...
 LLJMM.
 
-3. Move: Move piece I LEFT by 1 steps
+3. Move piece I LEFT by 1 steps
 Heuristic: 0
 Board:
 AAB.DF
@@ -28,7 +37,7 @@ GZIII.
 GZJ...
 LLJMM.
 
-4. Move: Move piece C UP by 1 steps
+4. Move piece C UP by 1 steps
 Heuristic: 0
 Board:
 AABCDF
@@ -38,7 +47,7 @@ GZIII.
 GZJ...
 LLJMM.
 
-5. Move: Move piece F DOWN by 3 steps
+5. Move piece F DOWN by 3 steps
 Heuristic: 0
 Board:
 AABCD.
@@ -48,12 +57,12 @@ GZIIIF
 GZJ..F
 LLJMMF
 
-6. Move: Move piece P RIGHT by 3 steps
+6. Move piece P RIGHT by 3 steps
 Heuristic: 0
 Board:
 AABCD.
 ..BCD.
-G...PP
+G.....
 GZIIIF
 GZJ..F
 LLJMMF

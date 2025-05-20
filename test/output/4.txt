@@ -1,0 +1,89 @@
+==================================================
+           RUSH HOUR PUZZLE SOLUTION
+==================================================
+Algorithm      : Iterative Deepening DFS
+Heuristic      : -
+Nodes Visited  : 367
+Time Taken     : 15 ms
+==================================================
+
+1. Initial State
+Heuristic: 0
+Board:
+AAB..F
+..BCDF
+GPPCDF
+GZ.III
+GZJ...
+LLJMM.
+
+2. Move piece C UP by 1 steps
+Heuristic: 0
+Board:
+AABC.F
+..BCDF
+GPP.DF
+GZ.III
+GZJ...
+LLJMM.
+
+3. Move piece P RIGHT by 1 steps
+Heuristic: 0
+Board:
+AABC.F
+..BCDF
+G.PPDF
+GZ.III
+GZJ...
+LLJMM.
+
+4. Move piece Z UP by 2 steps
+Heuristic: 0
+Board:
+AABC.F
+.ZBCDF
+GZPPDF
+G..III
+G.J...
+LLJMM.
+
+5. Move piece I LEFT by 2 steps
+Heuristic: 0
+Board:
+AABC.F
+.ZBCDF
+GZPPDF
+GIII..
+G.J...
+LLJMM.
+
+6. Move piece F DOWN by 3 steps
+Heuristic: 0
+Board:
+AABC..
+.ZBCD.
+GZPPD.
+GIII.F
+G.J..F
+LLJMMF
+
+7. Move piece D DOWN by 2 steps
+Heuristic: 0
+Board:
+AABC..
+.ZBC..
+GZPP..
+GIIIDF
+G.J.DF
+LLJMMF
+
+8. Move piece P RIGHT by 2 steps
+Heuristic: 0
+Board:
+AABC..
+.ZBC..
+GZ....
+GIIIDF
+G.J.DF
+LLJMMF
+
