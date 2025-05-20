@@ -10,9 +10,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class MainGUI extends JFrame {  private Board board;
+public class MainGUI extends JFrame {
+  private Board board;
   private JPanel boardPanel;
   private JLabel statusLabel;
+  private JLabel timeLabel;
+  private JLabel nodesVisitedLabel;
   private JComboBox<String> algoBox;
   private JComboBox<String> heuristicBox;
   private JButton solveButton, loadButton, saveButton;
@@ -34,12 +37,13 @@ public class MainGUI extends JFrame {  private Board board;
   public MainGUI() {
     setTitle("Rush Hour Solver");
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    setLayout(new BorderLayout());    // Top panel for controls
+    setLayout(new BorderLayout());
+    // Top panel for controls
     JPanel topPanel = new JPanel();
     loadButton = new JButton("Load Board");
     loadButton.addActionListener(e -> loadBoard());
     topPanel.add(loadButton);
-    
+
     // Save Button
     saveButton = new JButton("Save Solution");
 
@@ -75,52 +79,78 @@ public class MainGUI extends JFrame {  private Board board;
     solveButton.setEnabled(false);
     topPanel.add(solveButton);
 
-
-    add(topPanel, BorderLayout.NORTH);    boardPanel = new JPanel();
-    add(boardPanel, BorderLayout.CENTER);    // Create center panel to hold board and moves list
+    add(topPanel, BorderLayout.NORTH);
+    boardPanel = new JPanel();
+    add(boardPanel, BorderLayout.CENTER);
+    // Create center panel to hold board and moves list
     JPanel centerPanel = new JPanel(new BorderLayout());
-    
+
     // Create a wrapper panel for the board to maintain square ratio
     JPanel boardWrapper = new JPanel(new GridBagLayout());
     boardWrapper.add(boardPanel);
     centerPanel.add(boardWrapper, BorderLayout.CENTER);
-    
+
     // Create moves list sidebar with custom rendering
     movesListModel = new DefaultListModel<>();
     movesList = new JList<>(movesListModel);
     movesList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     movesList.setCellRenderer(new DefaultListCellRenderer() {
-        @Override
-        public Component getListCellRendererComponent(JList<?> list, Object value, 
-                int index, boolean isSelected, boolean cellHasFocus) {
-            JLabel label = (JLabel) super.getListCellRendererComponent(
-                list, value, index, isSelected, cellHasFocus);
-            label.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
-            return label;
-        }
+      @Override
+      public Component getListCellRendererComponent(JList<?> list, Object value,
+          int index, boolean isSelected, boolean cellHasFocus) {
+        JLabel label = (JLabel) super.getListCellRendererComponent(
+            list, value, index, isSelected, cellHasFocus);
+        label.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+        return label;
+      }
     });
     movesList.addListSelectionListener(e -> {
-        if (!e.getValueIsAdjusting() && movesList.getSelectedIndex() != -1) {
-            currentStateIndex = movesList.getSelectedIndex();
-            updateBoardDisplay();
-            movesList.ensureIndexIsVisible(currentStateIndex);
-        }
+      if (!e.getValueIsAdjusting() && movesList.getSelectedIndex() != -1) {
+        currentStateIndex = movesList.getSelectedIndex();
+        updateBoardDisplay();
+        movesList.ensureIndexIsVisible(currentStateIndex);
+      }
     });
-    
+
     // Add scrolling to the moves list
     JScrollPane scrollPane = new JScrollPane(movesList);
     scrollPane.setPreferredSize(new Dimension(250, 0));
     centerPanel.add(scrollPane, BorderLayout.EAST);
-    
+
     add(centerPanel, BorderLayout.CENTER);
+    // Create a bottom panel to hold both controls and status
+    JPanel bottomPanel = new JPanel(new BorderLayout());
+    // Create status panel
+    JPanel statusPanel = new JPanel(new BorderLayout());
+
+    // Create labels panel for multiple status items
+    JPanel labelsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
 
     statusLabel = new JLabel("Please load a board file.");
-    add(statusLabel, BorderLayout.SOUTH);
+    timeLabel = new JLabel("Time: -");
+    nodesVisitedLabel = new JLabel("Nodes visited: -");
+
+    statusLabel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
+    timeLabel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
+    nodesVisitedLabel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
+
+    labelsPanel.add(statusLabel);
+    labelsPanel.add(timeLabel);
+    labelsPanel.add(nodesVisitedLabel);
+
+    statusPanel.add(labelsPanel, BorderLayout.CENTER);
+
+    // Add status panel to the top of bottom panel
+    bottomPanel.add(statusPanel, BorderLayout.NORTH);
+
+    // Create and add animation controls to bottom panel
+    createAnimationControls(bottomPanel);
+
+    // Add the combined bottom panel to the frame
+    add(bottomPanel, BorderLayout.SOUTH);
 
     setSize(700, 700);
     setVisible(true);
-
-    createAnimationControls();
 
     animationTimer = new Timer(ANIMATION_DELAY, e -> showNextState());
     animationTimer.setRepeats(true);
@@ -132,25 +162,24 @@ public class MainGUI extends JFrame {  private Board board;
     int userSelection = fileChooser.showSaveDialog(this);
 
     if (userSelection == JFileChooser.APPROVE_OPTION) {
-        File fileToSave = fileChooser.getSelectedFile();
+      File fileToSave = fileChooser.getSelectedFile();
 
-        try {
-            // Assuming `finalState` is your solved board's final state
-            State finalState = solutionStates.get(solutionStates.size()-1);
-            if ( finalState != null) {
-                String[] solutionSteps = finalState.getSolutionPath();
-                Files.write(fileToSave.toPath(), Arrays.asList(solutionSteps));
-                JOptionPane.showMessageDialog(this, "Solution saved to " + fileToSave.getAbsolutePath());
-            } else {
-                JOptionPane.showMessageDialog(this, "No solution available. Please solve the board first.");
-            }
-        } catch (IOException ex) {
-            JOptionPane.showMessageDialog(this, "Error saving file: " + ex.getMessage());
-            ex.printStackTrace();
+      try {
+        // Assuming `finalState` is your solved board's final state
+        State finalState = solutionStates.get(solutionStates.size() - 1);
+        if (finalState != null) {
+          String[] solutionSteps = finalState.getSolutionPath();
+          Files.write(fileToSave.toPath(), Arrays.asList(solutionSteps));
+          JOptionPane.showMessageDialog(this, "Solution saved to " + fileToSave.getAbsolutePath());
+        } else {
+          JOptionPane.showMessageDialog(this, "No solution available. Please solve the board first.");
         }
+      } catch (IOException ex) {
+        JOptionPane.showMessageDialog(this, "Error saving file: " + ex.getMessage());
+        ex.printStackTrace();
+      }
     }
-}
-
+  }
 
   private void loadBoard() {
     JFileChooser chooser = new JFileChooser("test/input");
@@ -177,6 +206,7 @@ public class MainGUI extends JFrame {  private Board board;
         JOptionPane.ERROR_MESSAGE // Message type
     );
   }
+
   private void drawBoard() {
     boardPanel.removeAll();
     if (board == null) {
@@ -187,39 +217,60 @@ public class MainGUI extends JFrame {  private Board board;
 
     int rows = board.getRows();
     int cols = board.getCols();
-    boardPanel.setLayout(new GridLayout(rows, cols));
-    
-    // Calculate the size to maintain square cells
-    int size = Math.min(getHeight() - 150, getWidth() - 300); // Account for controls and moves list
-    size = Math.min(size, Math.min(600, Math.max(300, size))); // Set min/max bounds
-    boardPanel.setPreferredSize(new Dimension(size, size));
-    
-    char[][] grid = board.getGrid();
+    boardPanel.setLayout(new GridLayout(rows + 2, cols + 2)); // Add space for border cells
 
-    for (int i = 0; i < rows; i++) {
-      for (int j = 0; j < cols; j++) {
+    // Calculate the size to maintain square cells
+    int size = Math.min(getHeight() - 150, getWidth() - 300);
+    size = Math.min(size, Math.min(600, Math.max(300, size)));
+    boardPanel.setPreferredSize(new Dimension(size, size));
+
+    char[][] grid = board.getGrid();
+    int kRow = components.IO.getKRow();
+    int kCol = components.IO.getKCol();
+
+    // Create the board with border cells
+    for (int i = -1; i <= rows; i++) {
+      for (int j = -1; j <= cols; j++) {
         JPanel cell = new JPanel();
         cell.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         cell.setOpaque(true);
 
-        char piece = grid[i][j];
-        if (piece == '.') {
-          cell.setBackground(Color.WHITE);
-        } else if (piece == 'P') {
-          cell.setBackground(Color.RED); // Primary piece
-        } else if (piece == 'K') {
-          cell.setBackground(Color.GREEN); // Exit
-        } else {
-          // Generate a consistent color for each piece letter
-          cell.setBackground(new Color(
-              (piece * 83) % 255,
-              (piece * 157) % 255,
-              (piece * 223) % 255));
-        }
+        // Border cells
+        if (i == -1 || i == rows || j == -1 || j == cols) {
+          cell.setBackground(Color.LIGHT_GRAY);
 
-        JLabel label = new JLabel(String.valueOf(piece), SwingConstants.CENTER);
-        label.setFont(new Font("Arial", Font.BOLD, 20));
-        cell.add(label);
+          // Add exit marker 'K'
+          if ((i == kRow && j == kCol) ||
+              (kRow == -1 && i == -1 && j == kCol) ||
+              (kRow == rows && i == rows && j == kCol) ||
+              (kCol == -1 && i == kRow && j == -1) ||
+              (kCol == cols && i == kRow && j == cols)) {
+            cell.setBackground(Color.GREEN);
+            JLabel label = new JLabel("K", SwingConstants.CENTER);
+            label.setFont(new Font("Arial", Font.BOLD, 20));
+            cell.add(label);
+          }
+        }
+        // Main board cells
+        else {
+          char piece = grid[i][j];
+          if (piece == '.') {
+            cell.setBackground(Color.WHITE);
+          } else if (piece == 'P') {
+            cell.setBackground(Color.RED);
+          } else {
+            cell.setBackground(new Color(
+                (piece * 83) % 255,
+                (piece * 157) % 255,
+                (piece * 223) % 255));
+          }
+
+          if (piece != '.') {
+            JLabel label = new JLabel(String.valueOf(piece), SwingConstants.CENTER);
+            label.setFont(new Font("Arial", Font.BOLD, 20));
+            cell.add(label);
+          }
+        }
 
         boardPanel.add(cell);
       }
@@ -243,7 +294,8 @@ public class MainGUI extends JFrame {  private Board board;
     playButton.setText("▶");
     prevButton.setEnabled(false);
     playButton.setEnabled(false);
-    nextButton.setEnabled(false);    // Reset solution states
+    nextButton.setEnabled(false);
+    // Reset solution states
     solutionStates = null;
     currentStateIndex = 0;
     movesListModel.clear();
@@ -257,12 +309,12 @@ public class MainGUI extends JFrame {  private Board board;
       statusLabel.setText("Failed to reset board: " + ex.getMessage());
       return;
     }
-
     System.out.println("Starting solve process...");
     statusLabel.setText("Solving...");
+    timeLabel.setText("Time: -");
+    nodesVisitedLabel.setText("Nodes visited: -");
     solveButton.setEnabled(false);
 
-    
     SwingWorker<components.State, Void> worker = new SwingWorker<components.State, Void>() {
       long time = 0;
 
@@ -273,11 +325,11 @@ public class MainGUI extends JFrame {  private Board board;
         System.out.println("Using algorithm: " + algo);
         long start = System.currentTimeMillis();
         String heuristic = heuristicBox.getSelectedItem().toString();
-        if(heuristic == "Jarak Piece ke K"){
+        if (heuristic == "Jarak Piece ke K") {
           heuristic = "pieceToDest";
-        }else if(heuristic == "Jumlah Piece Penghalang"){
+        } else if (heuristic == "Jumlah Piece Penghalang") {
           heuristic = "countBlockingPieces";
-        }else{
+        } else {
           heuristic = "combineTwo";
         }
 
@@ -321,31 +373,38 @@ public class MainGUI extends JFrame {  private Board board;
             while (current != null) {
               solutionStates.add(0, current);
               current = current.getParent();
-            }            currentStateIndex = 0;
-            statusLabel.setText("Solution found! " + (solutionStates.size() - 1) + " moves");            // Populate moves list
+            }
+            currentStateIndex = 0;
+
+            // Update all status labels
+            statusLabel.setText("Solution found! " + (solutionStates.size() - 1) + " moves");
+            timeLabel.setText(String.format("Time: %d ms", time));
+            nodesVisitedLabel.setText("Nodes visited: " + solution.getTotalNodeVisited());
+            // Populate moves list
             movesListModel.clear();
             movesListModel.addElement("Step 0: Initial State");
             List<Move> moves = solution.getPathFromRoot();
             for (int i = 0; i < moves.size(); i++) {
-                Move move = moves.get(i);
-                String direction = move.getDirection();
-                char piece = move.getPiece().getLetter();
-                int steps = move.getSteps();
-                movesListModel.addElement(String.format("Step %d: Move %c %s by %d", 
-                    i + 1, piece, direction, steps));
+              Move move = moves.get(i);
+              String direction = move.getDirection();
+              char piece = move.getPiece().getLetter();
+              int steps = move.getSteps();
+              movesListModel.addElement(String.format("Step %d: Move %c %s by %d",
+                  i + 1, piece, direction, steps));
             }
             movesList.setSelectedIndex(0);
-
-            // Enable save Button
 
             // Enable animation controls
             prevButton.setEnabled(true);
             playButton.setEnabled(true);
             nextButton.setEnabled(true);
-
             // Show initial state
             updateBoardDisplay();
             saveButton.setEnabled(true);
+
+            // Automatically start the animation
+            animationTimer.start();
+            playButton.setText("⏸");
           } else {
             System.out.println("No solution found!");
             statusLabel.setText("No solution found.");
@@ -361,8 +420,9 @@ public class MainGUI extends JFrame {  private Board board;
     worker.execute();
   }
 
-  private void createAnimationControls() {
+  private void createAnimationControls(JPanel bottomPanel) {
     JPanel controlPanel = new JPanel();
+    controlPanel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0)); // Add some vertical padding
 
     prevButton = new JButton("←");
     prevButton.setEnabled(false);
@@ -380,7 +440,7 @@ public class MainGUI extends JFrame {  private Board board;
     controlPanel.add(playButton);
     controlPanel.add(nextButton);
 
-    add(controlPanel, BorderLayout.SOUTH);
+    bottomPanel.add(controlPanel, BorderLayout.CENTER);
   }
 
   // Add these methods to handle animation
@@ -398,6 +458,48 @@ public class MainGUI extends JFrame {  private Board board;
     if (solutionStates != null && currentStateIndex < solutionStates.size() - 1) {
       currentStateIndex++;
       updateBoardDisplay();
+
+      // Check if P is at exit position in final state
+      char[][] grid = board.getGrid();
+      if (currentStateIndex == solutionStates.size() - 1) {
+        int kRow = components.IO.getKRow();
+        int kCol = components.IO.getKCol();
+        int rows = board.getRows();
+        int cols = board.getCols();
+
+        boolean atExit = false;
+        if (kRow == -1 && kCol >= 0 && kCol < cols && grid[0][kCol] == 'P')
+          atExit = true;
+        else if (kRow == rows && kCol >= 0 && kCol < cols && grid[rows - 1][kCol] == 'P')
+          atExit = true;
+        else if (kCol == -1 && kRow >= 0 && kRow < rows && grid[kRow][0] == 'P')
+          atExit = true;
+        else if (kCol == cols && kRow >= 0 && kRow < rows && grid[kRow][cols - 1] == 'P')
+          atExit = true;
+
+        if (atExit) {
+          animationTimer.stop();
+
+          // Add a delay before removing P
+          Timer exitTimer = new Timer(ANIMATION_DELAY, e -> {
+            // Remove P piece from board
+            for (int i = 0; i < grid.length; i++) {
+              for (int j = 0; j < grid[0].length; j++) {
+                if (grid[i][j] == 'P') {
+                  grid[i][j] = '.';
+                  drawBoard();
+                  statusLabel.setText("Puzzle solved! The red piece has escaped!");
+                  playButton.setText("▶");
+                  break;
+                }
+              }
+            }
+            ((Timer) e.getSource()).stop();
+          });
+          exitTimer.setRepeats(false);
+          exitTimer.start();
+        }
+      }
     } else {
       animationTimer.stop();
       playButton.setText("▶");
