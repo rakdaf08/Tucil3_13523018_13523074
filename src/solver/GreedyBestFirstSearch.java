@@ -46,7 +46,8 @@ public class GreedyBestFirstSearch {
           continue;
         }
 
-        int heuristic = Heuristic.getHeuristic(newBoard, type);        State newState = new State(
+        int heuristic = Heuristic.getHeuristic(newBoard, type);        
+        State newState = new State(
             newBoard,
             current.getCostSoFar() + 1,
             heuristic,
