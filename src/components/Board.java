@@ -23,10 +23,9 @@ public class Board {
     this.rows = grid.length;
     this.cols = grid[0].length;
     this.pieces = new HashMap<>();
-    try{
+    try {
       initializePieces();
-    }
-    catch(Exception e){
+    } catch (Exception e) {
       throw e;
     }
   }
@@ -42,7 +41,7 @@ public class Board {
   private void initializePieces() throws Exception {
     boolean[][] visited = new boolean[rows][cols];
 
-    try{
+    try {
       for (int i = 0; i < rows; i++) {
         for (int j = 0; j < cols; j++) {
           char cell = grid[i][j];
@@ -55,10 +54,10 @@ public class Board {
           }
         }
       }
-      if(pieces.size() - 1 != IO.getN()){
+      if (pieces.size() - 1 != IO.getN()) {
         throw new Exception("Number of piece didnt match N");
       }
-    }catch(Exception e){
+    } catch (Exception e) {
       throw e;
     }
   }
@@ -70,7 +69,7 @@ public class Board {
           visited[piece.row][j] = true;
         }
       }
-    } else{
+    } else {
       for (int i = piece.row; i < piece.row + piece.size; i++) {
         if (isValidPosition(i, piece.col)) {
           visited[i][piece.col] = true;
@@ -103,7 +102,6 @@ public class Board {
     int[] end = move.getEndPosition();
     int endCol = end[0], endRow = end[1];
 
-    // Check if the end position is inside the grid
     if (endRow < 0 || endRow >= rows || endCol < 0 || endCol >= cols) {
       return false;
     }
@@ -113,7 +111,6 @@ public class Board {
     int startRow = move.getStartY();
     String direction = move.getDirection();
 
-    // Check if the path is clear for the move
     if ((piece.getOrientation() == 'H' && (direction.equals("UP") || direction.equals("DOWN"))) ||
         (piece.getOrientation() == 'V' && (direction.equals("LEFT") || direction.equals("RIGHT")))) {
       return false;
@@ -229,34 +226,31 @@ public class Board {
           if (isValidMove(rightMove)) {
             moves.add(rightMove);
           } else {
-            break; // Stop if we hit an obstacle
+            break;
           }
         }
       } else if (piece.getOrientation() == 'V') {
-        // For vertical pieces, try UP and DOWN moves
-        // Try moves upward
         for (int steps = 1; steps <= rows; steps++) {
           if (piece.getRow() - steps < 0)
-            break; // Don't go beyond the top edge
+            break;
 
           Move upMove = new Move(piece, piece.getCol(), piece.getRow(), "UP", steps);
           if (isValidMove(upMove)) {
             moves.add(upMove);
           } else {
-            break; // Stop if we hit an obstacle
+            break;
           }
         }
 
-        // Try moves downward
         for (int steps = 1; steps <= rows; steps++) {
           if (piece.getRow() + piece.getSize() + steps - 1 >= rows)
-            break; // Don't go beyond the bottom edge
+            break;
 
           Move downMove = new Move(piece, piece.getCol(), piece.getRow(), "DOWN", steps);
           if (isValidMove(downMove)) {
             moves.add(downMove);
           } else {
-            break; // Stop if we hit an obstacle
+            break;
           }
         }
       }
@@ -285,7 +279,7 @@ public class Board {
     return this.pieces;
   }
 
-  public Piece  getPrimaryPiece() {
+  public Piece getPrimaryPiece() {
     return pieces.get("P");
   }
 

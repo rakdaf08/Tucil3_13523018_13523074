@@ -65,14 +65,12 @@ public class State implements Comparable<State> {
     List<String> steps = new ArrayList<>();
     State current = this;
     List<State> path = new ArrayList<>();
-    // Trace the path back to the root
     while (current != null) {
         path.add(current);
         current = current.parent;
     }
     Collections.reverse(path);
 
-    // Format the path into strings
     for (State state : path) {
         int index = state.getCostSoFar() + 1;
         StringBuilder sb = new StringBuilder();
