@@ -49,9 +49,11 @@ public class IterativeDeepeningSearch {
             move.getStartY(),
             move.getDirection(),
             move.getSteps());
-          newBoard.makeMove(newMove);          String newBoardHash = newBoard.toString();
+            newBoard.makeMove(newMove);          
+            String newBoardHash = newBoard.toString();
           if (!visited.contains(newBoardHash)) {
-            visited.add(newBoardHash);            State newState = new State(newBoard, state.getCostSoFar() + 1, 0, state, move, currentTotalVisited + nodesExpanded);
+            visited.add(newBoardHash);            
+            State newState = new State(newBoard, state.getCostSoFar() + 1, 0, state, move, currentTotalVisited + nodesExpanded);
             stack.push(newState);
           }
         }
