@@ -2,7 +2,6 @@ import components.*;
 import solver.*;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -28,7 +27,7 @@ public class MainGUI extends JFrame {
   private JButton prevButton;
   private JList<String> movesList;
   private DefaultListModel<String> movesListModel;
-  private static final int ANIMATION_DELAY = 500;
+  private static final int ANIMATION_DELAY = 1;
 
   public static void main(String[] args) {
     SwingUtilities.invokeLater(MainGUI::new);
@@ -295,7 +294,8 @@ public class MainGUI extends JFrame {
       long time = 0;
 
       @Override
-      protected components.State doInBackground() {        components.State solution = null;
+      protected components.State doInBackground() {
+        components.State solution = null;
         String algo = (String) algoBox.getSelectedItem();
         System.out.println("Using algorithm: " + algo);
         long start = System.currentTimeMillis();
@@ -303,17 +303,17 @@ public class MainGUI extends JFrame {
         String heuristicType = "";
 
         if (algo.equals("Greedy Best First Search") || algo.equals("A*")) {
-            String selectedHeuristic = heuristicBox.getSelectedItem().toString();
-            if (selectedHeuristic.equals("Jarak Piece ke K")) {
-                heuristic = "pieceToDest";
-                heuristicType = "Piece to Destination";
-            } else if (selectedHeuristic.equals("Jumlah Piece Penghalang")) {
-                heuristic = "countBlockingPieces";
-                heuristicType = "Count Blocking Pieces";
-            } else {
-                heuristic = "combineTwo";
-                heuristicType = "Combination of Count Blocking Pieces and Piece to Destination";
-            }
+          String selectedHeuristic = heuristicBox.getSelectedItem().toString();
+          if (selectedHeuristic.equals("Jarak Piece ke K")) {
+            heuristic = "pieceToDest";
+            heuristicType = "Piece to Destination";
+          } else if (selectedHeuristic.equals("Jumlah Piece Penghalang")) {
+            heuristic = "countBlockingPieces";
+            heuristicType = "Count Blocking Pieces";
+          } else {
+            heuristic = "combineTwo";
+            heuristicType = "Combination of Count Blocking Pieces and Piece to Destination";
+          }
         }
 
         try {
@@ -447,18 +447,15 @@ public class MainGUI extends JFrame {
         int rows = board.getRows();
         int cols = board.getCols();
 
-        // Find the P piece position and size
         int pRow = -1, pCol = -1, pSize = 0;
         boolean isHorizontal = false;
 
-        // Find P piece and determine its orientation and size
         for (int i = 0; i < rows; i++) {
           for (int j = 0; j < cols; j++) {
             if (grid[i][j] == 'P') {
               if (pRow == -1) {
                 pRow = i;
                 pCol = j;
-                // Check orientation
                 if (j + 1 < cols && grid[i][j + 1] == 'P') {
                   isHorizontal = true;
                 }
@@ -469,16 +466,12 @@ public class MainGUI extends JFrame {
         }
 
         boolean atExit = false;
-        // Check for top exit
         if (kRow == -1 && kCol >= 0 && kCol < cols && grid[0][kCol] == 'P' && !isHorizontal)
           atExit = true;
-        // Check for bottom exit
         else if (kRow == rows && kCol >= 0 && kCol < cols && grid[rows - 1][kCol] == 'P' && !isHorizontal)
           atExit = true;
-        // Check for left exit
         else if (kCol == -1 && kRow >= 0 && kRow < rows && grid[kRow][0] == 'P' && isHorizontal)
           atExit = true;
-        // Check for right exit
         else if (kCol == cols && kRow >= 0 && kRow < rows && grid[kRow][cols - 1] == 'P' && isHorizontal)
           atExit = true;
 
@@ -486,7 +479,6 @@ public class MainGUI extends JFrame {
           animationTimer.stop();
 
           Timer exitTimer = new Timer(ANIMATION_DELAY, e -> {
-            // Clear the entire P piece
             for (int i = 0; i < grid.length; i++) {
               for (int j = 0; j < grid[0].length; j++) {
                 if (grid[i][j] == 'P') {

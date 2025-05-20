@@ -28,7 +28,6 @@ public class State implements Comparable<State> {
         this.heuristicType = heuristicType;
     }
 
-    // Overloaded constructor with default executionTime, algorithm, and heuristic type
     public State(Board board, int costSoFar, int heuristic, State parent, Move move, int totalNodeVisited) {
         this(board, costSoFar, heuristic, parent, move, totalNodeVisited, 0, "", "");
     }
