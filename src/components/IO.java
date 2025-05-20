@@ -154,8 +154,6 @@ public class IO {
                 boardRows = rowsList.toArray(new String[0]);
             }
             
-            System.out.printf("KCOL: %d, KROW: %d\n", kCol, kRow);
-
             if (boardRows.length != a) {
                 throw new IllegalArgumentException("Number of rows (" + boardRows.length
                         + ") does not match the specified dimension (" + a + ").");
@@ -247,15 +245,6 @@ public class IO {
                 // If K is not at the edge of the inner grid, we can't place it on a border
                 throw new IllegalArgumentException(
                         "Exit 'K' must be at the edge of the grid: row=" + kRowPosition + ", col=" + kColPosition);
-            }
-
-            // Print the grid for debugging
-            System.out.println("Final grid:");
-            for (int i = 0; i < borderCol; i++) {
-                for (int j = 0; j < borderRow; j++) {
-                    System.out.print(grid[i][j]);
-                }
-                System.out.println();
             }
 
             innerGrid = new char[a][b];
