@@ -17,7 +17,7 @@ public class AStar {
         while (!openList.isEmpty()) {
             State current = openList.poll();
             statesExplored++;
-            
+
             if (current.isWin()) {
                 System.out.println("Solution found after exploring " + statesExplored + " states!");
                 current.getBoard().printBoard();
@@ -30,7 +30,6 @@ public class AStar {
             }
             closedList.add(boardHash);
 
-            // Generate all possible next states
             List<Move> possibleMoves = current.getBoard().getPossibleMoves();
             for (Move move : possibleMoves) {
                 Board nextBoard = current.getBoard().copy();
@@ -45,9 +44,9 @@ public class AStar {
                 try {
                     nextBoard.makeMove(newMove);
 
-                    // Buat state baru dan cek apakah sudah pernah dilalui apa belum
                     int heuristic = Heuristic.getHeuristic(nextBoard, heuristicType);
-                    State nextState = new State(nextBoard, current.getCostSoFar() + 1, heuristic, current, move, statesExplored);
+                    State nextState = new State(nextBoard, current.getCostSoFar() + 1, heuristic, current, move,
+                            statesExplored);
 
                     String nextBoardHash = nextBoard.toString();
                     if (!closedList.contains(nextBoardHash)) {

@@ -51,7 +51,8 @@ public class UniformCostSearch {
         String newBoardHash = newBoard.toString();
         if (visited.contains(newBoardHash)) {
           continue;
-        }        State newState = new State(
+        }
+        State newState = new State(
             newBoard,
             current.getCostSoFar() + 1,
             0,

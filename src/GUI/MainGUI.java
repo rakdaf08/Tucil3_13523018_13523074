@@ -28,7 +28,7 @@ public class MainGUI extends JFrame {
   private JButton prevButton;
   private JList<String> movesList;
   private DefaultListModel<String> movesListModel;
-  private static final int ANIMATION_DELAY = 500; // 1 second between states
+  private static final int ANIMATION_DELAY = 500;
 
   public static void main(String[] args) {
     SwingUtilities.invokeLater(MainGUI::new);
@@ -38,33 +38,29 @@ public class MainGUI extends JFrame {
     setTitle("Rush Hour Solver");
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     setLayout(new BorderLayout());
-    // Top panel for controls
+
     JPanel topPanel = new JPanel();
     loadButton = new JButton("Load Board");
     loadButton.addActionListener(e -> loadBoard());
     topPanel.add(loadButton);
 
-    // Save Button
     saveButton = new JButton("Save Solution");
 
     saveButton.addActionListener(e -> saveSolutionToFile());
     saveButton.setEnabled(false);
     topPanel.add(saveButton);
 
-    // Algorithm Selection
     algoBox = new JComboBox<>(new String[] {
         "Uniform Cost Search", "Greedy Best First Search", "A*", "Iterative Deepening DFS"
     });
     topPanel.add(algoBox);
 
-    // Heuristic Selection
     heuristicBox = new JComboBox<>(new String[] {
         "Jarak Piece ke K", "Jumlah Piece Penghalang", "Gabungan Dua Heuristic"
     });
-    heuristicBox.setEnabled(false); // Disabled by default
+    heuristicBox.setEnabled(false);
     topPanel.add(heuristicBox);
 
-    // Enable heuristicBox only for GBFS and A*
     algoBox.addActionListener(e -> {
       String selectedAlgo = (String) algoBox.getSelectedItem();
       if (selectedAlgo.equals("Greedy Best First Search") || selectedAlgo.equals("A*")) {
@@ -82,15 +78,12 @@ public class MainGUI extends JFrame {
     add(topPanel, BorderLayout.NORTH);
     boardPanel = new JPanel();
     add(boardPanel, BorderLayout.CENTER);
-    // Create center panel to hold board and moves list
     JPanel centerPanel = new JPanel(new BorderLayout());
 
-    // Create a wrapper panel for the board to maintain square ratio
     JPanel boardWrapper = new JPanel(new GridBagLayout());
     boardWrapper.add(boardPanel);
     centerPanel.add(boardWrapper, BorderLayout.CENTER);
 
-    // Create moves list sidebar with custom rendering
     movesListModel = new DefaultListModel<>();
     movesList = new JList<>(movesListModel);
     movesList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -112,18 +105,14 @@ public class MainGUI extends JFrame {
       }
     });
 
-    // Add scrolling to the moves list
     JScrollPane scrollPane = new JScrollPane(movesList);
     scrollPane.setPreferredSize(new Dimension(250, 0));
     centerPanel.add(scrollPane, BorderLayout.EAST);
 
     add(centerPanel, BorderLayout.CENTER);
-    // Create a bottom panel to hold both controls and status
     JPanel bottomPanel = new JPanel(new BorderLayout());
-    // Create status panel
     JPanel statusPanel = new JPanel(new BorderLayout());
 
-    // Create labels panel for multiple status items
     JPanel labelsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
 
     statusLabel = new JLabel("Please load a board file.");
@@ -140,13 +129,10 @@ public class MainGUI extends JFrame {
 
     statusPanel.add(labelsPanel, BorderLayout.CENTER);
 
-    // Add status panel to the top of bottom panel
     bottomPanel.add(statusPanel, BorderLayout.NORTH);
 
-    // Create and add animation controls to bottom panel
     createAnimationControls(bottomPanel);
 
-    // Add the combined bottom panel to the frame
     add(bottomPanel, BorderLayout.SOUTH);
 
     setSize(700, 700);
@@ -165,7 +151,6 @@ public class MainGUI extends JFrame {
       File fileToSave = fileChooser.getSelectedFile();
 
       try {
-        // Assuming `finalState` is your solved board's final state
         State finalState = solutionStates.get(solutionStates.size() - 1);
         if (finalState != null) {
           String[] solutionSteps = finalState.getSolutionPath();
@@ -200,11 +185,10 @@ public class MainGUI extends JFrame {
 
   private void showErrorDialog(String message) {
     JOptionPane.showMessageDialog(
-        this, // Parent component
-        message, // Message text
-        "Error Loading Board", // Dialog title
-        JOptionPane.ERROR_MESSAGE // Message type
-    );
+        this,
+        message,
+        "Error Loading Board",
+        JOptionPane.ERROR_MESSAGE);
   }
 
   private void drawBoard() {
@@ -217,9 +201,8 @@ public class MainGUI extends JFrame {
 
     int rows = board.getRows();
     int cols = board.getCols();
-    boardPanel.setLayout(new GridLayout(rows + 2, cols + 2)); // Add space for border cells
+    boardPanel.setLayout(new GridLayout(rows + 2, cols + 2));
 
-    // Calculate the size to maintain square cells
     int size = Math.min(getHeight() - 150, getWidth() - 300);
     size = Math.min(size, Math.min(600, Math.max(300, size)));
     boardPanel.setPreferredSize(new Dimension(size, size));
@@ -228,18 +211,15 @@ public class MainGUI extends JFrame {
     int kRow = components.IO.getKRow();
     int kCol = components.IO.getKCol();
 
-    // Create the board with border cells
     for (int i = -1; i <= rows; i++) {
       for (int j = -1; j <= cols; j++) {
         JPanel cell = new JPanel();
         cell.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         cell.setOpaque(true);
 
-        // Border cells
         if (i == -1 || i == rows || j == -1 || j == cols) {
           cell.setBackground(Color.LIGHT_GRAY);
 
-          // Add exit marker 'K'
           if ((i == kRow && j == kCol) ||
               (kRow == -1 && i == -1 && j == kCol) ||
               (kRow == rows && i == rows && j == kCol) ||
@@ -250,9 +230,7 @@ public class MainGUI extends JFrame {
             label.setFont(new Font("Arial", Font.BOLD, 20));
             cell.add(label);
           }
-        }
-        // Main board cells
-        else {
+        } else {
           char piece = grid[i][j];
           if (piece == '.') {
             cell.setBackground(Color.WHITE);
@@ -287,7 +265,6 @@ public class MainGUI extends JFrame {
       return;
     }
 
-    // Reset animation state
     if (animationTimer.isRunning()) {
       animationTimer.stop();
     }
@@ -295,12 +272,11 @@ public class MainGUI extends JFrame {
     prevButton.setEnabled(false);
     playButton.setEnabled(false);
     nextButton.setEnabled(false);
-    // Reset solution states
+
     solutionStates = null;
     currentStateIndex = 0;
     movesListModel.clear();
 
-    // Reset board to initial state
     try {
       String[] input = components.IO.readFile(currentFile.getPath());
       board = components.IO.parseInput(input);
@@ -367,7 +343,6 @@ public class MainGUI extends JFrame {
           components.State solution = get();
           if (solution != null) {
             System.out.println("Solution found!");
-            // Generate all states from root to solution
             solutionStates = new ArrayList<>();
             components.State current = solution;
             while (current != null) {
@@ -376,11 +351,10 @@ public class MainGUI extends JFrame {
             }
             currentStateIndex = 0;
 
-            // Update all status labels
             statusLabel.setText("Solution found! " + (solutionStates.size() - 1) + " moves");
             timeLabel.setText(String.format("Time: %d ms", time));
             nodesVisitedLabel.setText("Nodes visited: " + solution.getTotalNodeVisited());
-            // Populate moves list
+
             movesListModel.clear();
             movesListModel.addElement("Step 0: Initial State");
             List<Move> moves = solution.getPathFromRoot();
@@ -394,15 +368,13 @@ public class MainGUI extends JFrame {
             }
             movesList.setSelectedIndex(0);
 
-            // Enable animation controls
             prevButton.setEnabled(true);
             playButton.setEnabled(true);
             nextButton.setEnabled(true);
-            // Show initial state
+
             updateBoardDisplay();
             saveButton.setEnabled(true);
 
-            // Automatically start the animation
             animationTimer.start();
             playButton.setText("⏸");
           } else {
@@ -422,7 +394,7 @@ public class MainGUI extends JFrame {
 
   private void createAnimationControls(JPanel bottomPanel) {
     JPanel controlPanel = new JPanel();
-    controlPanel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0)); // Add some vertical padding
+    controlPanel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
 
     prevButton = new JButton("←");
     prevButton.setEnabled(false);
@@ -443,7 +415,6 @@ public class MainGUI extends JFrame {
     bottomPanel.add(controlPanel, BorderLayout.CENTER);
   }
 
-  // Add these methods to handle animation
   private void toggleAnimation() {
     if (animationTimer.isRunning()) {
       animationTimer.stop();
@@ -459,7 +430,6 @@ public class MainGUI extends JFrame {
       currentStateIndex++;
       updateBoardDisplay();
 
-      // Check if P is at exit position in final state
       char[][] grid = board.getGrid();
       if (currentStateIndex == solutionStates.size() - 1) {
         int kRow = components.IO.getKRow();
@@ -480,9 +450,7 @@ public class MainGUI extends JFrame {
         if (atExit) {
           animationTimer.stop();
 
-          // Add a delay before removing P
           Timer exitTimer = new Timer(ANIMATION_DELAY, e -> {
-            // Remove P piece from board
             for (int i = 0; i < grid.length; i++) {
               for (int j = 0; j < grid[0].length; j++) {
                 if (grid[i][j] == 'P') {
