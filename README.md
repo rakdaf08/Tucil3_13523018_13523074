@@ -4,7 +4,7 @@
   <img src="https://img.lakeshorelearning.com/is/image/OCProduction/fg503?wid=800&fmt=jpeg&qlt=85,1&pscan=auto&op_sharpen=0&resMode=sharp2&op_usm=1,0.65,6,0" alt="Rush Hour Board Game" width="600"/>
 </p>
 
-This program was created to fulfill **Tugas Kecil 3 IF2211 Strategi Algoritma**. It implements four classic search algorithms to solve the Rush Hour puzzle and find the quickest path for the red car to reach the exit.
+This program was created to fulfill **Tugas Kecil 3 IF2211 Strategi Algoritma**. It implements four classic route finding algorithms to solve the Rush Hour puzzle and find the quickest path for the red car to reach the exit.
 
 ---
 
@@ -74,6 +74,11 @@ java -cp bin MainGUI
 ---
 
 ## 👨‍💻 Authors
+
+<p align="center">
+  <img src="https://drive.google.com/uc?export=view&id=1GWsUQ1jMcXiUtt48Cgjc_dUwHo2z1_B7" alt="Author Image" width="600"/>
+</p>
+
 - 13523018 - Raka Daffa Iftikhar
 - 13523074 - Ahsan Malik Al Farisi
 
