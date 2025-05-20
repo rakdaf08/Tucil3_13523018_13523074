@@ -131,6 +131,10 @@ public class State implements Comparable<State> {
       int pieceEnd = pieceStart + primaryPiece.getSize() - 1;
       int pieceRow = primaryPiece.getRow();
 
+      if (kCol == -1) {
+        return (pieceStart == 0) && (pieceRow == kRow);
+      }
+
       if (kAboveBoard || kOnTopBorder) {
         return (pieceRow == 0) && (kCol >= pieceStart && kCol <= pieceEnd);
       } else if (kBelowBoard || kOnBottomBorder) {

@@ -437,31 +437,56 @@ public class MainGUI extends JFrame {
         int rows = board.getRows();
         int cols = board.getCols();
 
+        // Find the P piece position and size
+        int pRow = -1, pCol = -1, pSize = 0;
+        boolean isHorizontal = false;
+
+        // Find P piece and determine its orientation and size
+        for (int i = 0; i < rows; i++) {
+          for (int j = 0; j < cols; j++) {
+            if (grid[i][j] == 'P') {
+              if (pRow == -1) {
+                pRow = i;
+                pCol = j;
+                // Check orientation
+                if (j + 1 < cols && grid[i][j + 1] == 'P') {
+                  isHorizontal = true;
+                }
+              }
+              pSize++;
+            }
+          }
+        }
+
         boolean atExit = false;
-        if (kRow == -1 && kCol >= 0 && kCol < cols && grid[0][kCol] == 'P')
+        // Check for top exit
+        if (kRow == -1 && kCol >= 0 && kCol < cols && grid[0][kCol] == 'P' && !isHorizontal)
           atExit = true;
-        else if (kRow == rows && kCol >= 0 && kCol < cols && grid[rows - 1][kCol] == 'P')
+        // Check for bottom exit
+        else if (kRow == rows && kCol >= 0 && kCol < cols && grid[rows - 1][kCol] == 'P' && !isHorizontal)
           atExit = true;
-        else if (kCol == -1 && kRow >= 0 && kRow < rows && grid[kRow][0] == 'P')
+        // Check for left exit
+        else if (kCol == -1 && kRow >= 0 && kRow < rows && grid[kRow][0] == 'P' && isHorizontal)
           atExit = true;
-        else if (kCol == cols && kRow >= 0 && kRow < rows && grid[kRow][cols - 1] == 'P')
+        // Check for right exit
+        else if (kCol == cols && kRow >= 0 && kRow < rows && grid[kRow][cols - 1] == 'P' && isHorizontal)
           atExit = true;
 
         if (atExit) {
           animationTimer.stop();
 
           Timer exitTimer = new Timer(ANIMATION_DELAY, e -> {
+            // Clear the entire P piece
             for (int i = 0; i < grid.length; i++) {
               for (int j = 0; j < grid[0].length; j++) {
                 if (grid[i][j] == 'P') {
                   grid[i][j] = '.';
-                  drawBoard();
-                  statusLabel.setText("Puzzle solved! The red piece has escaped!");
-                  playButton.setText("▶");
-                  break;
                 }
               }
             }
+            drawBoard();
+            statusLabel.setText("Puzzle solved! The red piece has escaped!");
+            playButton.setText("▶");
             ((Timer) e.getSource()).stop();
           });
           exitTimer.setRepeats(false);
