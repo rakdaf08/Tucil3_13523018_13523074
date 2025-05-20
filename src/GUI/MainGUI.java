@@ -10,9 +10,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class MainGUI extends JFrame {  private Board board;
+public class MainGUI extends JFrame {  
+  private Board board;
   private JPanel boardPanel;
   private JLabel statusLabel;
+  private JLabel timeLabel;
+  private JLabel nodesVisitedLabel;
   private JComboBox<String> algoBox;
   private JComboBox<String> heuristicBox;
   private JButton solveButton, loadButton, saveButton;
@@ -20,7 +23,8 @@ public class MainGUI extends JFrame {  private Board board;
   private Timer animationTimer;
   private List<State> solutionStates;
   private int currentStateIndex;
-  private JButton playButton;  private JButton nextButton;
+  private JButton playButton;  
+  private JButton nextButton;
   private JButton prevButton;
   private JList<String> movesList;
   private DefaultListModel<String> movesListModel;
@@ -33,7 +37,8 @@ public class MainGUI extends JFrame {  private Board board;
   public MainGUI() {
     setTitle("Rush Hour Solver");
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    setLayout(new BorderLayout());    // Top panel for controls
+    setLayout(new BorderLayout());    
+    // Top panel for controls
     JPanel topPanel = new JPanel();
     loadButton = new JButton("Load Board");
     loadButton.addActionListener(e -> loadBoard());
@@ -75,8 +80,10 @@ public class MainGUI extends JFrame {  private Board board;
     topPanel.add(solveButton);
 
 
-    add(topPanel, BorderLayout.NORTH);    boardPanel = new JPanel();
-    add(boardPanel, BorderLayout.CENTER);    // Create center panel to hold board and moves list
+    add(topPanel, BorderLayout.NORTH);    
+    boardPanel = new JPanel();
+    add(boardPanel, BorderLayout.CENTER);    
+    // Create center panel to hold board and moves list
     JPanel centerPanel = new JPanel(new BorderLayout());
     
     // Create a wrapper panel for the board to maintain square ratio
@@ -111,14 +118,28 @@ public class MainGUI extends JFrame {  private Board board;
     scrollPane.setPreferredSize(new Dimension(250, 0));
     centerPanel.add(scrollPane, BorderLayout.EAST);
     
-    add(centerPanel, BorderLayout.CENTER);    // Create a bottom panel to hold both controls and status
+    add(centerPanel, BorderLayout.CENTER);    
+    // Create a bottom panel to hold both controls and status
     JPanel bottomPanel = new JPanel(new BorderLayout());
-    
-    // Create status panel
+      // Create status panel
     JPanel statusPanel = new JPanel(new BorderLayout());
+    
+    // Create labels panel for multiple status items
+    JPanel labelsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
+    
     statusLabel = new JLabel("Please load a board file.");
+    timeLabel = new JLabel("Time: -");
+    nodesVisitedLabel = new JLabel("Nodes visited: -");
+    
     statusLabel.setBorder(BorderFactory.createEmptyBorder(0,10,0,10));
-    statusPanel.add(statusLabel, BorderLayout.CENTER);
+    timeLabel.setBorder(BorderFactory.createEmptyBorder(0,10,0,10));
+    nodesVisitedLabel.setBorder(BorderFactory.createEmptyBorder(0,10,0,10));
+    
+    labelsPanel.add(statusLabel);
+    labelsPanel.add(timeLabel);
+    labelsPanel.add(nodesVisitedLabel);
+    
+    statusPanel.add(labelsPanel, BorderLayout.CENTER);
     
     // Add status panel to the top of bottom panel
     bottomPanel.add(statusPanel, BorderLayout.NORTH);
@@ -168,7 +189,8 @@ public class MainGUI extends JFrame {  private Board board;
     if (res == JFileChooser.APPROVE_OPTION) {
       currentFile = chooser.getSelectedFile();
       try {
-        String[] input = components.IO.readFile(currentFile.getPath());        board = components.IO.parseInput(input);
+        String[] input = components.IO.readFile(currentFile.getPath());        
+        board = components.IO.parseInput(input);
         drawBoard();
         statusLabel.setText("Board loaded: " + currentFile.getName());
         solveButton.setEnabled(true);
@@ -273,7 +295,8 @@ public class MainGUI extends JFrame {  private Board board;
     playButton.setText("▶");
     prevButton.setEnabled(false);
     playButton.setEnabled(false);
-    nextButton.setEnabled(false);    // Reset solution states
+    nextButton.setEnabled(false);    
+    // Reset solution states
     solutionStates = null;
     currentStateIndex = 0;
     movesListModel.clear();
@@ -287,9 +310,10 @@ public class MainGUI extends JFrame {  private Board board;
       statusLabel.setText("Failed to reset board: " + ex.getMessage());
       return;
     }
-    
-    System.out.println("Starting solve process...");
+      System.out.println("Starting solve process...");
     statusLabel.setText("Solving...");
+    timeLabel.setText("Time: -");
+    nodesVisitedLabel.setText("Nodes visited: -");
     solveButton.setEnabled(false);
 
     
@@ -342,8 +366,7 @@ public class MainGUI extends JFrame {  private Board board;
       @Override
       protected void done() {
         try {
-          components.State solution = get();
-          if (solution != null) {
+          components.State solution = get();          if (solution != null) {
             System.out.println("Solution found!");
             // Generate all states from root to solution
             solutionStates = new ArrayList<>();
@@ -351,8 +374,14 @@ public class MainGUI extends JFrame {  private Board board;
             while (current != null) {
               solutionStates.add(0, current);
               current = current.getParent();
-            }            currentStateIndex = 0;
-            statusLabel.setText("Solution found! " + (solutionStates.size() - 1) + " moves");            // Populate moves list
+            }            
+            currentStateIndex = 0;
+            
+            // Update all status labels
+            statusLabel.setText("Solution found! " + (solutionStates.size() - 1) + " moves");
+            timeLabel.setText(String.format("Time: %d ms", time));
+            nodesVisitedLabel.setText("Nodes visited: " + solution.getTotalNodeVisited());
+            // Populate moves list
             movesListModel.clear();
             movesListModel.addElement("Step 0: Initial State");
             List<Move> moves = solution.getPathFromRoot();

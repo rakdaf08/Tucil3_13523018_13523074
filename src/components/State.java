@@ -8,13 +8,23 @@ public class State implements Comparable<State> {
   private int heuristic;
   private State parent;
   private Move move;
+  private int totalNodeVisited;
 
-  public State(Board board, int costSoFar, int heuristic, State parent, Move move) {
+  public int getTotalNodeVisited() {
+    return totalNodeVisited;
+  }
+
+  public void setTotalNodeVisited(int totalNodeVisited) {
+    this.totalNodeVisited = totalNodeVisited;
+  }
+
+  public State(Board board, int costSoFar, int heuristic, State parent, Move move, int totalNodeVisited) {
     this.board = board;
     this.costSoFar = costSoFar;
     this.heuristic = heuristic;
     this.parent = parent;
     this.move = move;
+    this.totalNodeVisited = totalNodeVisited;
   }
 
   public int getF() {

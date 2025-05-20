@@ -19,7 +19,7 @@ public class UniformCostSearch {
     visited.clear();
     nodesExpanded = 0;
 
-    State initialState = new State(initialBoard, 0, 0, null, null);
+    State initialState = new State(initialBoard, 0, 0, null, null, 0);
     queue.add(initialState);
 
     while (!queue.isEmpty()) {
@@ -51,14 +51,13 @@ public class UniformCostSearch {
         String newBoardHash = newBoard.toString();
         if (visited.contains(newBoardHash)) {
           continue;
-        }
-
-        State newState = new State(
+        }        State newState = new State(
             newBoard,
             current.getCostSoFar() + 1,
             0,
             current,
-            newMove);
+            newMove,
+            nodesExpanded);
 
         queue.add(newState);
       }

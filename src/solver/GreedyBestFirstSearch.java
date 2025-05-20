@@ -10,7 +10,7 @@ public class GreedyBestFirstSearch {
     int nodesExpanded = 0;
 
     int initialHeuristic = Heuristic.getHeuristic(initialBoard, type);
-    State initialState = new State(initialBoard, 0, initialHeuristic, null, null);
+    State initialState = new State(initialBoard, 0, initialHeuristic, null, null, 0);
     queue.add(initialState);
 
     while (!queue.isEmpty()) {
@@ -46,13 +46,13 @@ public class GreedyBestFirstSearch {
           continue;
         }
 
-        int heuristic = Heuristic.getHeuristic(newBoard, type);
-        State newState = new State(
+        int heuristic = Heuristic.getHeuristic(newBoard, type);        State newState = new State(
             newBoard,
             current.getCostSoFar() + 1,
             heuristic,
             current,
-            newMove);
+            newMove,
+            nodesExpanded);
         queue.add(newState);
       }
     }
