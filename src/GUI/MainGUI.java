@@ -27,7 +27,7 @@ public class MainGUI extends JFrame {
   private JButton prevButton;
   private JList<String> movesList;
   private DefaultListModel<String> movesListModel;
-  private static final int ANIMATION_DELAY = 1;
+  private static final int ANIMATION_DELAY = 500;
 
   public static void main(String[] args) {
     SwingUtilities.invokeLater(MainGUI::new);
