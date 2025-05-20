@@ -5,16 +5,14 @@ import java.util.*;
 public class Main {
   public static void main(String[] args) {
     try {
-      // Read input file
       System.out.println("Enter input file path (from test/input folder): ");
       Scanner scanner = new Scanner(System.in);
       String inputFile = scanner.nextLine();
       String filepath = "test/input/" + inputFile;
 
-      // Parse input and create board
       String[] inputString = IO.readFile(filepath);
       Board initialBoard = IO.parseInput(inputString);
-      // Print initial board state
+
       System.out.println("\nInitial Board State:");
       initialBoard.printBoard();
       System.out.printf("Primary Col: %d, KCol: %d\n", initialBoard.getPrimaryPiece().getCol(), IO.getKCol());
@@ -33,7 +31,6 @@ public class Main {
         }
       }
 
-      // Choose search algorithm
       System.out.println("\nChoose search algorithm:");
       System.out.println("1. Uniform Cost Search");
       System.out.println("2. Greedy Best First Search");
@@ -77,7 +74,7 @@ public class Main {
           solution = gbfs.solve(initialBoard, heuristicType);
           break;
         case 3:
-        System.out.println("Choose heuristic:");
+          System.out.println("Choose heuristic:");
           System.out.println("1. Jarak Piece ke K");
           System.out.println("2. Jumlah Piece Penghalang");
           System.out.println("3. Gabungan Dua Heuristic");
@@ -100,8 +97,8 @@ public class Main {
           solution = AStar.solve(initialBoard, heuristicType);
           break;
         case 4:
-          // IterativeDeepeningSearch idfs = new IterativeDeepeningSearch();
-          // solution = idfs.solve(initialBoard);
+          IterativeDeepeningSearch idfs = new IterativeDeepeningSearch();
+          solution = idfs.solve(initialBoard);
           break;
 
         default:
@@ -118,7 +115,6 @@ public class Main {
         System.out.println("Number of moves: " + path.size());
         System.out.println("Time taken: " + (endTime - startTime) + "ms");
 
-        // Print each move
         System.out.println("\nMoves:");
         for (int i = 0; i < path.size(); i++) {
           Move move = path.get(i);
@@ -129,25 +125,10 @@ public class Main {
               move.getSteps());
         }
 
-        // Print final state
         System.out.println("\nFinal Board State:");
         solution.printState();
 
-        // Save to file option
-        // String[] output = new String[path.size() + 3];
-        // output[0] = "Number of moves: " + path.size();
-        // output[1] = "Time taken: " + (endTime - startTime) + "ms";
-        // output[2] = "\nMoves:";
-
-        // for (int i = 0; i < path.size(); i++) {
-        //   Move move = path.get(i);
-        //   output[i + 3] = String.format("%d. Move piece %c %s by %d steps",
-        //       i + 1,
-        //       move.getPiece().getLetter(),
-        //       move.getDirection(),
-        //       move.getSteps());
-        // }
-        String[] output = solution.getSolutionPath(); 
+        String[] output = solution.getSolutionPath();
 
         IO.saveOutputToFile(output, new ArrayList<>(initialBoard.getPieces().values()));
       } else {
