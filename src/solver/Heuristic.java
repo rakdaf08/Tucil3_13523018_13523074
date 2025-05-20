@@ -34,7 +34,8 @@ public class Heuristic {
           (exitCol >= pieceStartCol && exitCol <= pieceEndCol)) {
         distance = 0;
       } else {
-        int targetCol = Math.min(Math.max(exitCol, 0), boardCols - 1);
+        // Exit tidak ditemukan atau tidak aligned pakai Manhattan sebagai fallback
+        int targetCol = Math.min(Math.max(exitCol, 0), boardCols - 1); // Clamp to valid board position
         distance = Math.abs(targetCol - pieceEndCol)
             + Math.abs(Math.min(Math.max(exitRow, 0), boardRows - 1) - pieceRow);
       }
@@ -52,6 +53,7 @@ public class Heuristic {
           (exitRow >= pieceStartRow && exitRow <= pieceEndRow)) {
         distance = 0;
       } else {
+        // Exit tidak ditemukan atau tidak aligned pakai Manhattan sebagai fallback
         int targetRow = Math.min(Math.max(exitRow, 0), boardRows - 1);
         distance = Math.abs(targetRow - pieceEndRow)
             + Math.abs(Math.min(Math.max(exitCol, 0), boardCols - 1) - pieceCol);
@@ -72,10 +74,11 @@ public class Heuristic {
     if (primary == null)
       return 0;
 
-    boolean exitOnTop = (exitRow == -1 || exitRow == 0);
-    boolean exitOnBottom = (exitRow == boardRows - 1 || exitRow == boardRows);
-    boolean exitOnLeft = (exitCol == -1 || exitCol == 0);
-    boolean exitOnRight = (exitCol == boardCols - 1 || exitCol == boardCols);
+    // Arah pintu keluar
+    boolean exitOnTop = (exitRow == -1);
+    boolean exitOnBottom = (exitRow == boardRows);
+    boolean exitOnLeft = (exitCol == -1);
+    boolean exitOnRight = (exitCol == boardCols);
 
     if (primary.getOrientation() == 'H') {
       int row = primary.getRow();
@@ -118,6 +121,7 @@ public class Heuristic {
     return count;
   }
 
+  // Helper method untuk cek apakah cell mengandung piece
   private static boolean isBlockingPiece(Board board, int row, int col) {
     char cell = board.getCell(col, row);
     return cell != '.' && cell != 'K' && cell != '-' && cell != '|';

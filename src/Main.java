@@ -115,6 +115,7 @@ public class Main {
         List<Move> path = solution.getPathFromRoot();
         System.out.println("\nSolution found!");
         System.out.println("Number of moves: " + path.size());
+        System.out.println("Number of moves: " + path.size());
         System.out.println("Time taken: " + (endTime - startTime) + "ms");
 
         // Print each move
