@@ -295,18 +295,25 @@ public class MainGUI extends JFrame {
       long time = 0;
 
       @Override
-      protected components.State doInBackground() {
-        components.State solution = null;
+      protected components.State doInBackground() {        components.State solution = null;
         String algo = (String) algoBox.getSelectedItem();
         System.out.println("Using algorithm: " + algo);
         long start = System.currentTimeMillis();
-        String heuristic = heuristicBox.getSelectedItem().toString();
-        if (heuristic == "Jarak Piece ke K") {
-          heuristic = "pieceToDest";
-        } else if (heuristic == "Jumlah Piece Penghalang") {
-          heuristic = "countBlockingPieces";
-        } else {
-          heuristic = "combineTwo";
+        String heuristic = "";
+        String heuristicType = "";
+
+        if (algo.equals("Greedy Best First Search") || algo.equals("A*")) {
+            String selectedHeuristic = heuristicBox.getSelectedItem().toString();
+            if (selectedHeuristic.equals("Jarak Piece ke K")) {
+                heuristic = "pieceToDest";
+                heuristicType = "Piece to Destination";
+            } else if (selectedHeuristic.equals("Jumlah Piece Penghalang")) {
+                heuristic = "countBlockingPieces";
+                heuristicType = "Count Blocking Pieces";
+            } else {
+                heuristic = "combineTwo";
+                heuristicType = "Combination of Count Blocking Pieces and Piece to Destination";
+            }
         }
 
         try {
@@ -333,6 +340,9 @@ public class MainGUI extends JFrame {
           e.printStackTrace();
         }
         time = System.currentTimeMillis() - start;
+        solution.setExecutionTime(time);
+        solution.setAlgorithm(algo);
+        solution.setHeuristicType(heuristicType);
         System.out.println("Solve completed in " + time + "ms");
         return solution;
       }

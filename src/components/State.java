@@ -2,6 +2,7 @@ package components;
 
 import java.util.*;
 
+
 public class State implements Comparable<State> {
   private Board board;
   private int costSoFar;
@@ -9,6 +10,37 @@ public class State implements Comparable<State> {
   private State parent;
   private Move move;
   private int totalNodeVisited;
+  private long executionTime;
+  private String algorithm;
+  private String heuristicType;
+
+    
+
+    public State(Board board, int costSoFar, int heuristic, State parent, Move move, int totalNodeVisited, long executionTime, String algorithm, String heuristicType) {
+        this.board = board;
+        this.costSoFar = costSoFar;
+        this.heuristic = heuristic;
+        this.parent = parent;
+        this.move = move;
+        this.totalNodeVisited = totalNodeVisited;
+        this.executionTime = executionTime;
+        this.algorithm = algorithm;
+        this.heuristicType = heuristicType;
+    }
+
+    // Overloaded constructor with default executionTime, algorithm, and heuristic type
+    public State(Board board, int costSoFar, int heuristic, State parent, Move move, int totalNodeVisited) {
+        this(board, costSoFar, heuristic, parent, move, totalNodeVisited, 0, "", "");
+    }
+
+
+  public String getHeuristicType() {
+    return heuristicType;
+  }
+
+  public void setHeuristicType(String heuristicType) {
+    this.heuristicType = heuristicType;
+  }
 
   public int getTotalNodeVisited() {
     return totalNodeVisited;
@@ -17,16 +49,6 @@ public class State implements Comparable<State> {
   public void setTotalNodeVisited(int totalNodeVisited) {
     this.totalNodeVisited = totalNodeVisited;
   }
-
-  public State(Board board, int costSoFar, int heuristic, State parent, Move move, int totalNodeVisited) {
-    this.board = board;
-    this.costSoFar = costSoFar;
-    this.heuristic = heuristic;
-    this.parent = parent;
-    this.move = move;
-    this.totalNodeVisited = totalNodeVisited;
-  }
-
   public int getF() {
     return costSoFar + heuristic;
   }
@@ -61,9 +83,29 @@ public class State implements Comparable<State> {
     return path;
   }
 
-  public String[] getSolutionPath() {
-    List<String> steps = new ArrayList<>();
+  public String[] getSolutionPath() {    List<String> steps = new ArrayList<>();
     State current = this;
+    String heuristicType = (current.heuristicType == "") ? "-" : current.heuristicType;
+    String separator = "=".repeat(50);
+    String solutionTitle = String.format(
+      "%s\n" +
+      "           RUSH HOUR PUZZLE SOLUTION\n" +
+      "%s\n" +
+      "Algorithm      : %s\n" +
+      "Heuristic      : %s\n" +
+      "Nodes Visited  : %d\n" +
+      "Time Taken     : %d ms\n" +
+      "%s\n",
+      separator,
+      separator,
+      current.algorithm,
+      heuristicType,
+      current.totalNodeVisited,
+      current.executionTime,
+      separator
+    );
+    steps.add(solutionTitle);
+    
     List<State> path = new ArrayList<>();
     while (current != null) {
       path.add(current);
@@ -74,30 +116,30 @@ public class State implements Comparable<State> {
     for (State state : path) {
       int index = state.getCostSoFar() + 1;
       StringBuilder sb = new StringBuilder();
-      sb.append(String.format("%d. Move: ", index));
+      sb.append(String.format("%d. ", index));
 
       Move move = state.getMove();
       if (move != null) {
 
-        sb.append(String.format("Move piece %c %s by %d steps",
-            move.getPiece().getLetter(),
-            move.getDirection(),
-            move.getSteps()));
-      } else {
-        sb.append("Initial State");
-      }
-
-      sb.append("\nHeuristic: ").append(state.getHeuristic());
-      sb.append("\nBoard:\n");
-
-      for (int i = 0; i < state.getBoard().getRows(); i++) {
-        for (int j = 0; j < state.getBoard().getCols(); j++) {
-          sb.append(state.getBoard().getCell(j, i));
+          sb.append(String.format("Move piece %c %s by %d steps",
+              move.getPiece().getLetter(),
+              move.getDirection(),
+              move.getSteps()));
+        } else {
+          sb.append("Initial State");
         }
-        sb.append("\n");
-      }
 
-      steps.add(sb.toString());
+        sb.append("\nHeuristic: ").append(state.getHeuristic());
+        sb.append("\nBoard:\n");
+
+        for (int i = 0; i < state.getBoard().getRows(); i++) {
+          for (int j = 0; j < state.getBoard().getCols(); j++) {
+            sb.append(state.getBoard().getCell(j, i));
+          }
+          sb.append("\n");
+        }
+
+        steps.add(sb.toString());
     }
 
     return steps.toArray(new String[0]);
@@ -192,5 +234,41 @@ public class State implements Comparable<State> {
 
   public Move getMove() {
     return move;
+  }
+
+  public void setBoard(Board board) {
+    this.board = board;
+  }
+
+  public void setCostSoFar(int costSoFar) {
+    this.costSoFar = costSoFar;
+  }
+
+  public void setHeuristic(int heuristic) {
+    this.heuristic = heuristic;
+  }
+
+  public void setParent(State parent) {
+    this.parent = parent;
+  }
+
+  public void setMove(Move move) {
+    this.move = move;
+  }
+
+  public long getExecutionTime() {
+    return executionTime;
+  }
+
+  public void setExecutionTime(long executionTime) {
+    this.executionTime = executionTime;
+  }
+
+  public String getAlgorithm() {
+    return algorithm;
+  }
+
+  public void setAlgorithm(String algorithm) {
+    this.algorithm = algorithm;
   }
 }

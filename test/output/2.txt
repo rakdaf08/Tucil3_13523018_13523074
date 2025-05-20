@@ -1,0 +1,66 @@
+Solve with: Uniform Cost Search
+Heuristic Type: pieceToDest
+Total Node Visited: 80
+Total Execution Time: 47
+
+
+1. Move: Initial State
+Heuristic: 0
+Board:
+AAB..F
+..BCDF
+GPPCDF
+GZ.III
+GZJ...
+LLJMM.
+
+2. Move: Move piece D UP by 1 steps
+Heuristic: 0
+Board:
+AAB.DF
+..BCDF
+GPPC.F
+GZ.III
+GZJ...
+LLJMM.
+
+3. Move: Move piece I LEFT by 1 steps
+Heuristic: 0
+Board:
+AAB.DF
+..BCDF
+GPPC.F
+GZIII.
+GZJ...
+LLJMM.
+
+4. Move: Move piece C UP by 1 steps
+Heuristic: 0
+Board:
+AABCDF
+..BCDF
+GPP..F
+GZIII.
+GZJ...
+LLJMM.
+
+5. Move: Move piece F DOWN by 3 steps
+Heuristic: 0
+Board:
+AABCD.
+..BCD.
+GPP...
+GZIIIF
+GZJ..F
+LLJMMF
+
+6. Move: Move piece P RIGHT by 3 steps
+Heuristic: 0
+Board:
+AABCD.
+..BCD.
+G.....
+GZIIIF
+GZJ..F
+LLJMMF
+

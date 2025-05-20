@@ -40,14 +40,19 @@ public class Main {
 
       int choice = scanner.nextInt();
       State solution = null;
+      String algorithm = "";
+      String heuristicType = "";
+      String heuristic = "";
       long startTime = System.currentTimeMillis();
 
       switch (choice) {
         case 1:
           UniformCostSearch ucs = new UniformCostSearch();
+          algorithm = "Uniform Cost Search";
           solution = ucs.solve(initialBoard);
           break;
         case 2:
+          algorithm = "Greedy Best First Search";
           System.out.println("Choose heuristic:");
           System.out.println("1. Jarak Piece ke K");
           System.out.println("2. Jumlah Piece Penghalang");
@@ -56,7 +61,6 @@ public class Main {
           int hChoice = scanner.nextInt();
           scanner.nextLine();
 
-          String heuristicType;
           if (hChoice < 1 || hChoice > 3) {
             System.out.println("Invalid heuristic choice, using default.");
             heuristicType = "pieceToDest";
@@ -74,6 +78,7 @@ public class Main {
           solution = gbfs.solve(initialBoard, heuristicType);
           break;
         case 3:
+          algorithm = "A*";
           System.out.println("Choose heuristic:");
           System.out.println("1. Jarak Piece ke K");
           System.out.println("2. Jumlah Piece Penghalang");
@@ -97,6 +102,7 @@ public class Main {
           solution = AStar.solve(initialBoard, heuristicType);
           break;
         case 4:
+          algorithm = "Iterative Deepening Depth First Search";
           IterativeDeepeningSearch idfs = new IterativeDeepeningSearch();
           solution = idfs.solve(initialBoard);
           break;
@@ -127,6 +133,9 @@ public class Main {
 
         System.out.println("\nFinal Board State:");
         solution.printState();
+        solution.setExecutionTime(endTime - startTime);
+        solution.setAlgorithm(algorithm);
+        solution.setHeuristicType(heuristicType);
 
         String[] output = solution.getSolutionPath();
 
